@@ -1,0 +1,128 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String?
+  email     String   @unique
+  password  String
+  phone     String?
+  address   Address?
+  orders    Order[]
+  role      UserRole @default(USER)
+  passwordChangeAt DateTime?
+  isActive Boolean  @default(true)
+  Wishlist Wishlist[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  CartItem CartItem[]
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String  @unique
+  description String?
+  books     Book[]
+}
+
+
+model Book {
+  id          Int        @id @default(autoincrement())
+  title       String
+  author      String
+  description String
+  price       Decimal
+  stock       Int
+  coverImage  String
+  categoryId  Int
+  category    Category   @relation(fields: [categoryId], references: [id])
+  orderItems  OrderItem[]
+  Wishlist Wishlist[]
+  CartItem CartItem[] 
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  
+}
+
+
+model Wishlist {
+  id      Int      @id @default(autoincrement())
+  userId  Int
+  user    User     @relation(fields: [userId], references: [id])
+  bookId  Int
+  book    Book     @relation(fields: [bookId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, bookId])
+}
+
+
+
+model Address {
+  id           Int      @id @default(autoincrement())
+  country      String    @default("Egypt")
+  city         String
+  street       String
+  house_number String?
+  floor        String?
+
+  userId       Int @unique
+  user         User     @relation(fields: [userId], references: [id])
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model CartItem {
+  id       Int      @id @default(autoincrement())
+  userId   Int
+  bookId   Int
+  quantity Int      @default(1)
+  user     User     @relation(fields: [userId], references: [id])
+  book     Book     @relation(fields: [bookId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id         Int          @id @default(autoincrement())
+  userId     Int
+  user       User         @relation(fields: [userId], references: [id])
+  status     OrderStatus
+  totalPrice Decimal
+  orderItems OrderItem[]
+  createdAt  DateTime     @default(now())
+}
+
+model OrderItem {
+  id       Int   @id @default(autoincrement())
+  orderId  Int
+  bookId   Int
+  quantity Int
+  price    Decimal
+  order    Order @relation(fields: [orderId], references: [id])
+  book     Book  @relation(fields: [bookId], references: [id])
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  CANCELLED
+}
+
