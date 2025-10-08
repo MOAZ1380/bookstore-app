@@ -22,4 +22,8 @@ export class CreateBookDto {
   @Type(() => Number)
   @IsNumber()
   categoryId: number;
+
+  @Type(() => Number)
+  @IsNumber()
+  discount: number;
 }

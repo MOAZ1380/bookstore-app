@@ -9,9 +9,14 @@ import { WishlistModule } from './wishlist/wishlist.module';
 import { CartModule } from './cart/cart.module';
 import { EmailModule } from './email/email.module';
 import { OrderModule } from './order/order.module';
+import { join } from 'path';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
-  imports: [UsersModule, PrismaModule, CategoryModule, AuthModule, BookModule, WishlistModule, CartModule, EmailModule, OrderModule],
+  imports: [ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads/', 
+    }),UsersModule, PrismaModule, CategoryModule, AuthModule, BookModule, WishlistModule, CartModule, EmailModule, OrderModule],
   controllers: [],
   providers: [],
 })

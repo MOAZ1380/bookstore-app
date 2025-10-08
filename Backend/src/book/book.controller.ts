@@ -68,4 +68,45 @@ export class BookController {
   getBooksByCategory(@Param('categoryId', ParseIntPipe) categoryId: number) {
     return this.bookService.findBooksByCategory(categoryId);
   }
+
+
+  
+
+
+  @Patch('discount/')
+  @UseGuards(JwtRolesGuard)
+  @Roles(UserRole.ADMIN)
+  updateAllBooksDiscount(
+    @Body('discount') discount: number,
+  ) {
+    return this.bookService.updateAllBooksDiscount(discount);
+  }
+
+  @Patch('discount/:id')
+  @UseGuards(JwtRolesGuard)
+  @Roles(UserRole.ADMIN)
+  updateBookDiscount(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('discount') discount: number,
+  ) {
+    return this.bookService.updateBookDiscount(id, discount);
+  }
+
+  
+
+  @Patch('clear-discount/')
+  @UseGuards(JwtRolesGuard)
+  @Roles(UserRole.ADMIN)
+  clearAllBooksDiscount() {
+    return this.bookService.clearAllBooksDiscount();
+  }
+
+  @Patch('clear-discount/:id')
+  @UseGuards(JwtRolesGuard)
+  @Roles(UserRole.ADMIN)
+  clearBookDiscount(
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.bookService.clearBookDiscount(id);
+  }
 }

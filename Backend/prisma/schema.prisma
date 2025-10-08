@@ -45,6 +45,7 @@ model Book {
   coverImage  String
   categoryId  Int
   category    Category   @relation(fields: [categoryId], references: [id])
+  discount    Float?   @default(0)
   orderItems  OrderItem[]
   Wishlist Wishlist[]
   CartItem CartItem[] 
