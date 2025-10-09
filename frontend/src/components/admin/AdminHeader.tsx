@@ -1,6 +1,16 @@
 import { useState } from 'react';
-import { Settings, Menu, X } from 'lucide-react';
-import { Button } from '../ui/Button';
+import { 
+  Menu, 
+  X, 
+  BarChart3, 
+  LogOut, 
+  Settings, 
+  Users, 
+  Book, 
+  ShoppingCart,
+  FileText,
+  Package
+} from "lucide-react";import { Button } from '../ui/Button';
 import { Page } from '../../types';
 
 interface AdminHeaderProps {

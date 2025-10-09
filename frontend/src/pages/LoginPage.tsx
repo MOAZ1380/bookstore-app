@@ -3,9 +3,9 @@ import { Button } from "../components/ui/Button";
 import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
 import { Label } from "../components/ui/Label";
-import { Book } from "lucide-react";
+import { Book, Settings } from "lucide-react";
 import { Page } from "../types";
-import { loginUser } from "../api/auth"; // ✅ استدعاء API تسجيل الدخول
+import { loginUser } from "../api/auth"; 
 
 interface LoginPageProps {
   navigateTo: (page: Page) => void;
@@ -24,7 +24,6 @@ export const LoginPage = ({ navigateTo, setIsLoggedIn }: LoginPageProps) => {
   const handleLogin = async () => {
     setError(null);
 
-    // ✅ تحقق من الإدخالات قبل الإرسال
     if (!validateEmail(email)) {
       setError("الرجاء إدخال بريد إلكتروني صالح");
       return;
@@ -54,7 +53,19 @@ export const LoginPage = ({ navigateTo, setIsLoggedIn }: LoginPageProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center" dir="rtl">
+    <div
+      className="min-h-screen bg-gray-50 flex items-center justify-center relative"
+      dir="rtl"
+    >
+      {/* ✅ أيقونة الإعدادات في أسفل يسار الصفحة */}
+      <button
+        onClick={() => navigateTo("admin-login")}
+        className="absolute bottom-4 left-4 p-2 text-gray-500 hover:text-purple-600 transition"
+        title="إعدادات الإدارة"
+      >
+        <Settings className="w-6 h-6" />
+      </button>
+
       <div className="max-w-md w-full mx-4">
         <Card>
           <CardHeader className="text-center">
@@ -130,4 +141,3 @@ export const LoginPage = ({ navigateTo, setIsLoggedIn }: LoginPageProps) => {
     </div>
   );
 };
-

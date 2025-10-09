@@ -41,7 +41,7 @@ export class AuthService {
     }
 
     const payload = { userId: existingUser.id, email: existingUser.email };
-    const token = this.jwtService.sign(payload, { expiresIn: '1h' });
+    const token = this.jwtService.sign(payload, { expiresIn: '7d' });
 
     return { token };
   }
@@ -71,7 +71,7 @@ export class AuthService {
     });
 
     const payload = { userId: newUser.id, email: newUser.email };
-    const token = this.jwtService.sign(payload, { expiresIn: '1h' });
+    const token = this.jwtService.sign(payload, { expiresIn: '7d' });
 
     return { user: newUser, token };
   }
