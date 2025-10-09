@@ -12,7 +12,7 @@ import { MyOrdersPage } from './pages/MyOrdersPage';
 import { AdminLoginPage } from './pages/admin/AdminLoginPage';
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
 import { AdminCategoriesPage } from './pages/admin/AdminCategoriesPage';
-import { AdminBooksPage } from './pages/admin/AdminBooksPage';
+import  AdminBooksPage  from './pages/admin/AdminBooksPage';
 import { AdminOrdersPage } from './pages/admin/AdminOrdersPage';
 import { AdminUsersPage } from './pages/admin/AdminUsersPage';
 import { Book, Page } from './types';

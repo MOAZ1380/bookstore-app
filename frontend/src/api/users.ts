@@ -38,19 +38,16 @@ export async function deleteMyAccount() {
   return response.data;
 }
 
-// ✅ فقط الـ Admin يقدر يشوف مستخدم محدد
 export async function getUserById(id: number) {
   const response = await axiosClient.get(`${USERS_BASE_URL}/${id}`);
   return response.data;
 }
 
-// ✅ فقط الـ Admin يقدر يعدّل مستخدم محدد
 export async function updateUser(id: number, data: any) {
   const response = await axiosClient.patch(`${USERS_BASE_URL}/${id}`, data);
   return response.data;
 }
 
-// ✅ فقط الـ Admin يقدر يحذف مستخدم محدد
 export async function deleteUser(id: number) {
   const response = await axiosClient.delete(`${USERS_BASE_URL}/${id}`);
   return response.data;

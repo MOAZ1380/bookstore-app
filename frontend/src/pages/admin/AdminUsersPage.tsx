@@ -130,49 +130,60 @@ export const AdminUsersPage: React.FC<AdminUsersPageProps> = ({ currentPage, nav
     }
 
     const payload: any = {
-      name: formData.name || undefined,
+      name: formData.name,
       email: formData.email,
-      password: selectedUser ? undefined : formData.password,
-      phone: formData.phone || undefined,
+      phone: formData.phone,
       role: formData.role,
     };
 
+    if (!selectedUser) payload.password = formData.password;
+
     if (selectedUser) {
       const address = {
-        country: formData.country || undefined,
-        city: formData.city || undefined,
-        street: formData.street || undefined,
-        house_number: formData.house_number || undefined,
-        floor: formData.floor || undefined,
+        country: formData.country,
+        city: formData.city,
+        street: formData.street,
+        house_number: formData.house_number,
+        floor: formData.floor,
       };
       if (Object.values(address).some(v => v)) payload.address = address;
     }
 
-    try {
-      setIsSaving(true);
+    
+
+      try {
+        setIsSaving(true);
       if (selectedUser) {
         await updateUser(selectedUser.id, payload);
         setSuccessMessage('تم تحديث بيانات المستخدم');
+
+        setTimeout(() => {
+          closeModal();
+          loadUsers();
+        }, 650);
       } else {
-        await createUser(payload);
+        const newUser = await createUser(payload);
         setSuccessMessage('تم إنشاء المستخدم بنجاح');
+        setTimeout(() => {
+          closeModal();
+          loadUsers();
+        }, 650);
       }
-      await loadUsers();
-      setTimeout(() => closeModal(), 650);
-    } catch (err: any) {
+      } catch (err: any) {
       console.error(err);
       const msg = err?.response?.data?.message || err?.message || 'حدث خطأ';
       setErrorMessage(String(msg));
     } finally {
       setIsSaving(false);
     }
+
   };
 
   const handleDelete = async (id: number) => {
     if (!window.confirm('هل أنت متأكد من حذف هذا المستخدم؟')) return;
     try {
       await deleteUser(id);
-      await loadUsers();
+      setUsers(prev => prev.filter(u => u.id !== id));
     } catch (err) {
       console.error(err);
       setErrorMessage('فشل حذف المستخدم');
@@ -309,9 +320,7 @@ export const AdminUsersPage: React.FC<AdminUsersPageProps> = ({ currentPage, nav
 
               {/* Buttons */}
               <div className="col-span-2 flex flex-wrap justify-end gap-2 mt-4">
-                {selectedUser && (
-                  <Button type="button" variant="outline" onClick={() => openEdit(selectedUser)} disabled={isSaving}>إعادة تعيين</Button>
-                )}
+                
                 <Button type="button" variant="outline" onClick={closeModal} disabled={isSaving}>إلغاء</Button>
                 <Button type="submit" className={selectedUser ? 'bg-green-600 hover:bg-green-700 text-white font-bold' : 'bg-purple-600 hover:bg-purple-700 text-white font-bold'} disabled={isSaving}>
                   {isSaving ? (selectedUser ? 'جاري تحديث البيانات...' : 'جاري الإنشاء...') : (selectedUser ? 'تحديث بيانات المستخدم' : 'إنشاء المستخدم')}

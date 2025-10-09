@@ -7,6 +7,7 @@ import {
   Max,
   MaxLength,
   ValidateNested,
+  isEnum,
 } from 'class-validator';
 import { Address, UserRole } from '@prisma/client';
 import { CreateAddressDto } from './create.address.dto';
@@ -42,6 +43,6 @@ export class CreateUserDto {
   address?: CreateAddressDto;
 
   @IsOptional()
-  @IsEnum(UserRole)
+  @IsEnum(UserRole, { message: 'Role must be either USER or ADMIN' })
   role?: UserRole;
 }

@@ -11,6 +11,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcryptjs';
 import { User } from '@prisma/client';
+import { UpdateUserByAdminDto } from './dto/update-user-by-admin.dto';
 
 @Injectable()
 export class UsersService {
@@ -89,7 +90,7 @@ export class UsersService {
    * @param id - User ID
    * @param updateUserDto - DTO with fields to update
    */
-  async updateUser(id: number, updateUserDto: UpdateUserDto) {
+  async updateUser(id: number, updateUserDto: UpdateUserByAdminDto) {
     const user = await this.prisma.user.findUnique({
       where: { id },
       include: { address: true },

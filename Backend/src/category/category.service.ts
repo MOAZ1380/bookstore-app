@@ -96,6 +96,17 @@ export class CategoryService {
       throw new NotFoundException('Category not found');
     }
 
+    // cheack if any book is associated with this category
+    const associatedBooks = await this.prismaService.book.findFirst({
+      where: { categoryId: id },
+    });
+    if (associatedBooks) {
+      throw new BadRequestException(
+        'Cannot delete category with associated books',
+      );
+    }
+    
+
     await this.prismaService.category.delete({
       where: { id },
     });
