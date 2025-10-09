@@ -20,21 +20,22 @@ export interface Book {
   id: number;
   title: string;
   author: string;
-  price: number;
-  originalPrice: number;
-  image: string;
-  category: string;
-  rating: number;
   description: string;
-  isNew: boolean;
-  isBestseller: boolean;
+  price: number;
+  discount: number;
+  category: {
+    id: number;
+    name: string;
+    description: string;
+  };
+  coverImage: string;
+  stock: number;
 }
 
 export interface Category {
   id: number;
   name: string;
-  count: number;
-  icon: string;
+  description?: string;
 }
 
 export interface Order {

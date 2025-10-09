@@ -5,9 +5,9 @@ import { BookCard } from '../components/BookCard';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent } from '../components/ui/Card';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
-import { categories } from '../data/mockData';
-import { Page, Book as BookType } from '../types';
+import { Book as BookType, Category, Page } from '../types';
 import { getAllBooks } from '../api/book';
+import { getAllCategories } from '../api/category'; // استيراد الدالة
 
 interface HomePageProps {
   currentPage: Page;
@@ -27,22 +27,40 @@ export const HomePage = ({
   addToCart,
 }: HomePageProps) => {
   const [books, setBooks] = useState<BookType[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]); // state للـ categories
+  const [loadingBooks, setLoadingBooks] = useState(true);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+  const [errorBooks, setErrorBooks] = useState<string | null>(null);
+  const [errorCategories, setErrorCategories] = useState<string | null>(null);
 
-  // 🧭 fetch books when page loads
+  // fetch books
   useEffect(() => {
     const fetchBooks = async () => {
-      setLoading(true);
+      setLoadingBooks(true);
       const result = await getAllBooks();
       if (result.success && result.data) {
         setBooks(result.data);
       } else {
-        setError(result.message || 'فشل تحميل الكتب');
+        setErrorBooks(result.message || 'فشل تحميل الكتب');
       }
-      setLoading(false);
+      setLoadingBooks(false);
     };
     fetchBooks();
+  }, []);
+
+  // fetch categories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      setLoadingCategories(true);
+      const result = await getAllCategories();
+      if (result.success && result.data) {
+        setCategories(result.data);
+      } else {
+        setErrorCategories(result.message || 'فشل تحميل التصنيفات');
+      }
+      setLoadingCategories(false);
+    };
+    fetchCategories();
   }, []);
 
   return (
@@ -84,19 +102,26 @@ export const HomePage = ({
           <p className="text-gray-600">اختر من بين مجموعة واسعة من التصنيفات</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 max-w-7xl mx-auto px-4">
-          {categories.map((category) => (
-            <Card
-              key={category.id}
-              className="text-center hover:shadow-md transition-all duration-300 cursor-pointer group"
-              onClick={() => navigateTo('categories')}
-            >
-              <CardContent className="p-6">
-                <div className="text-4xl mb-2">{category.icon}</div>
-                <h3 className="font-bold mb-1 group-hover:text-purple-600 transition-colors">{category.name}</h3>
-                <p className="text-sm text-gray-600">{category.count} كتاب</p>
-              </CardContent>
-            </Card>
-          ))}
+          {loadingCategories ? (
+            <p className="text-center text-gray-500 col-span-full">جارٍ تحميل التصنيفات...</p>
+          ) : errorCategories ? (
+            <p className="text-center text-red-500 col-span-full">{errorCategories}</p>
+          ) : categories.length === 0 ? (
+            <p className="text-center text-gray-500 col-span-full">لا توجد تصنيفات حالياً.</p>
+          ) : (
+            categories.map((category) => (
+              <Card
+                key={category.id}
+                className="text-center hover:shadow-md transition-all duration-300 cursor-pointer group mt-4"
+                onClick={() => navigateTo('categories')}
+              >
+                <CardContent className="p-6 mt-2">
+                  <div className="text-4xl mb-2">📚</div>
+                  <h3 className="font-bold mb-1 group-hover:text-purple-600 transition-colors">{category.name}</h3>
+                </CardContent>
+              </Card>
+            ))
+          )}
         </div>
       </div>
 
@@ -108,10 +133,10 @@ export const HomePage = ({
             <p className="text-gray-600">أحدث الإصدارات والكتب الأكثر مبيعاً</p>
           </div>
 
-          {loading ? (
+          {loadingBooks ? (
             <p className="text-center text-gray-500">جارٍ تحميل الكتب...</p>
-          ) : error ? (
-            <p className="text-center text-red-500">{error}</p>
+          ) : errorBooks ? (
+            <p className="text-center text-red-500">{errorBooks}</p>
           ) : books.length === 0 ? (
             <p className="text-center text-gray-500">لا توجد كتب حالياً.</p>
           ) : (
