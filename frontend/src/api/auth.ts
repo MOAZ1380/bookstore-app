@@ -11,6 +11,8 @@ export async function registerUser(email: string, password: string) {
 
     const { token, user } = response.data;
 
+    Cookies.set('token', token, { expires: 7 });
+
     return { success: true, data: { user, token } };
   } catch (error: any) {
     console.error('Registration failed:', error.response?.data || error.message);
@@ -36,6 +38,8 @@ export async function loginUser(email: string, password: string) {
     });
 
     const { token, user } = response.data;
+
+    Cookies.set('token', token, { expires: 7 });
 
     return { success: true, data: { user, token } };
   } catch (error: any) {

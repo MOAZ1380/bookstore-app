@@ -17,6 +17,7 @@ import { AdminOrdersPage } from './pages/admin/AdminOrdersPage';
 import { AdminUsersPage } from './pages/admin/AdminUsersPage';
 import { Book, Page } from './types';
 import './index.css'
+import { WishlistPage } from './pages/WishlistPage';
 
 
 export const App = () => {
@@ -132,6 +133,15 @@ export const App = () => {
         );
       case 'admin-login':
         return <AdminLoginPage navigateTo={navigateTo} setIsAdmin={setIsAdmin} />;
+      case 'wishlist':
+          return (
+            <WishlistPage
+              currentPage={currentPage}
+              navigateTo={navigateTo}
+              cartItems={cartItems}
+              isLoggedIn={isLoggedIn}
+            />
+          );
       default:
         return (
           <HomePage

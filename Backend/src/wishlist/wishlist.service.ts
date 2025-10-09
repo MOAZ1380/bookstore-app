@@ -31,6 +31,7 @@ export class WishlistService {
         throw new ConflictException('This book is already in the wishlist');
       }
 
+
       const wishlistItem = await this.prisma.wishlist.create({
         data: { userId, bookId },
         include: { book: true },

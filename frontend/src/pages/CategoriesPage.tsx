@@ -132,7 +132,7 @@ export const CategoriesPage = ({
                   author: book.author,
                   price: book.price,
                   description: book.description,
-                  coverImage: `http://localhost:5000/uploads/${book.coverImage}`,
+                  coverImage: `http://localhost:5000/uploads/books/${book.coverImage}`,
                   discount: book.discount,
                   finalPrice: book.finalPrice,
                   category: book.category?.name || '',

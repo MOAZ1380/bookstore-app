@@ -2,6 +2,7 @@ export type Page =
   | 'home'
   | 'categories'
   | 'book-details'
+  | 'wishlist'
   | 'cart'
   | 'login'
   | 'register'
@@ -15,6 +16,7 @@ export type Page =
   | 'admin-books'
   | 'admin-orders'
   | 'admin-users';
+
 
 export interface Book {
   id: number;

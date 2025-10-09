@@ -1,9 +1,12 @@
+// src/components/BookCard.tsx
 import { Button } from './ui/Button';
 import { Card, CardContent } from './ui/Card';
 import { Badge } from './ui/Badge';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { Heart } from 'lucide-react';
 import { Book } from '../types';
+import { useWishlist } from '../hooks/useWishlist';
+import { useState } from 'react';
 
 interface BookCardProps {
   book: Book;
@@ -12,78 +15,89 @@ interface BookCardProps {
   onAddToCart?: (book: Book) => void;
 }
 
-export const BookCard = ({ book, showAddToCart = true, onClick, onAddToCart }: BookCardProps) => (
-  <Card
-    className="group hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col"
-    dir="rtl"
-  >
-    {/* Image Section */}
-    <div onClick={onClick} className="flex-1 relative">
-      <ImageWithFallback
-        src={book.coverImage}
-        alt={book.title}
-        className="w-full h-56 sm:h-64 object-cover rounded-t-lg"
-      />
+export const BookCard = ({ book, showAddToCart = true, onClick, onAddToCart }: BookCardProps) => {
+  const { wishlist, toggleWishlist } = useWishlist();
+  const [isHover, setIsHover] = useState(false);
 
-      {/* Badges */}
-      {book.discount && (
-        <Badge className="absolute top-2 left-2 bg-red-600 text-xs">
-          خصم {book.discount}%
-        </Badge>
-      )}
+  const isInWishlist = wishlist.includes(book.id.toString());
 
-      {/* Wishlist Icon */}
-      <button className="absolute top-2 right-2 p-2 bg-white/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-        <Heart className="w-4 h-4 text-gray-600" />
-      </button>
-    </div>
+  return (
+    <Card
+      className="group hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col"
+      dir="rtl"
+      onMouseEnter={() => setIsHover(true)}
+      onMouseLeave={() => setIsHover(false)}
+    >
+      {/* ✅ صورة الكتاب */}
+      <div onClick={onClick} className="flex-1 relative">
+        <ImageWithFallback
+          src={book.coverImage}
+          alt={book.title}
+          className="w-full h-56 sm:h-64 object-cover rounded-t-lg"
+        />
 
-    {/* Info Section */}
-    <CardContent className="p-4 flex-1 flex flex-col justify-between">
-      <div onClick={onClick} className="flex-1">
-        <h3 className="font-bold mb-1 text-right group-hover:text-purple-600 transition-colors text-sm sm:text-base line-clamp-2">
-          {book.title}
-        </h3>
-        <p className="text-gray-600 text-xs sm:text-sm mb-3 text-right">
-          {book.author}
-        </p>
-      </div>
+        {/* ✅ الخصم */}
+        {book.discount && (
+          <Badge className="absolute top-2 left-2 bg-red-600 text-xs">
+            خصم {book.discount}%
+          </Badge>
+        )}
 
-      {/* Price Section */}
-      <div className="flex items-center justify-between mt-auto">
-        <div className="text-right">
-          {/* السعر النهائي */}
-          <span className="text-base sm:text-lg font-bold text-purple-600">
-            {book.finalPrice} ر.س
-          </span>
-
-          {/* السعر الأصلي مشطوب لو فيه خصم */}
-          {book.price > book.finalPrice && (
-            <span className="text-xs sm:text-sm text-gray-500 line-through mr-2 block sm:inline">
-              {book.price} ر.س
-            </span>
-          )}
-        </div>
-      </div>
-    </CardContent>
-
-    {/* Add to Cart */}
-    {showAddToCart && (
-      <div className="p-4 pt-0">
-        <Button
-          onClick={() => onAddToCart?.(book)}
-          className="w-full bg-purple-600 hover:bg-purple-700 text-sm sm:text-base py-2"
+        {/* ✅ زر المفضلة */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation(); // يمنع تفعيل onClick تبع الكارد
+            toggleWishlist(book.id.toString());
+          }}
+          className={`absolute top-2 right-2 p-2 rounded-full transition-all 
+            ${isInWishlist ? 'bg-purple-600' : 'bg-white/80'} 
+            ${isHover ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
         >
-          أضف إلى السلة
-        </Button>
+          <Heart
+            className={`w-4 h-4 ${
+              isInWishlist ? 'text-white fill-white' : 'text-gray-600'
+            }`}
+          />
+        </button>
       </div>
-    )}
-  </Card>
-);
 
+      {/* ✅ تفاصيل الكتاب */}
+      <CardContent className="p-4 flex-1 flex flex-col justify-between">
+        <div onClick={onClick} className="flex-1">
+          <h3 className="font-bold mb-1 text-right group-hover:text-purple-600 transition-colors text-sm sm:text-base line-clamp-2">
+            {book.title}
+          </h3>
+          <p className="text-gray-600 text-xs sm:text-sm mb-3 text-right">
+            {book.author}
+          </p>
+        </div>
 
-// الصورة الأصلية (عند الرفع): 600×900px
+        {/* ✅ السعر */}
+        <div className="flex items-center justify-between mt-auto">
+          <div className="text-right">
+            <span className="text-base sm:text-lg font-bold text-purple-600">
+              {book.finalPrice} ر.س
+            </span>
+            {book.price > book.finalPrice && (
+              <span className="text-xs sm:text-sm text-gray-500 line-through mr-2 block sm:inline">
+                {book.price} ر.س
+              </span>
+            )}
+          </div>
+        </div>
+      </CardContent>
 
-// العرض في صفحة الكتب: 120×180px
-
-// العرض في صفحة التفاصيل: 240×360px
+      {/* ✅ زر الإضافة إلى السلة */}
+      {showAddToCart && (
+        <div className="p-4 pt-0">
+          <Button
+            onClick={() => onAddToCart?.(book)}
+            className="w-full bg-purple-600 hover:bg-purple-700 text-sm sm:text-base py-2"
+          >
+            أضف إلى السلة
+          </Button>
+        </div>
+      )}
+    </Card>
+  );
+};
