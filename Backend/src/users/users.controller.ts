@@ -14,6 +14,7 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
+import {UpdateUserByAdminDto} from './dto/update-user-by-admin.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtRolesGuard } from 'src/auth/guard/auth.guard';
 import { Roles } from 'src/auth/decorator/roles.decorator';
@@ -81,9 +82,9 @@ export class UsersController {
   @Roles(UserRole.ADMIN)
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body() updateUserByAdminDto: UpdateUserByAdminDto,
   ) {
-    return this.usersService.updateUser(id, updateUserDto);
+    return this.usersService.updateUser(id, updateUserByAdminDto);
   }
 
   @Delete(':id')
