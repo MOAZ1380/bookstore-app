@@ -25,11 +25,7 @@ export interface Book {
   description: string;
   price: number;
   discount: number;
-  category: {
-    id: number;
-    name: string;
-    description: string;
-  };
+  categoryId: number;
   coverImage: string;
   stock: number;
 }

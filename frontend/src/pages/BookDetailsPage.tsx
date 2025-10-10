@@ -1,15 +1,16 @@
 // src/pages/BookDetailsPage.tsx
-import { useState } from 'react';
-import { Header } from '../components/Header';
-import { Footer } from '../components/Footer';
-import { BookCard } from '../components/BookCard';
-import { Button } from '../components/ui/Button';
-import { Badge } from '../components/ui/Badge';
-import { ImageWithFallback } from '../components/figma/ImageWithFallback';
-import { ShoppingCart, Heart, Truck } from 'lucide-react';
-import { sampleBooks } from '../data/mockData';
-import { Page, Book as BookType } from '../types';
-import { useWishlist } from '../hooks/useWishlist';
+import { useState, useEffect } from "react";
+import { Header } from "../components/Header";
+import { Footer } from "../components/Footer";
+import { BookCard } from "../components/BookCard";
+import { Button } from "../components/ui/Button";
+import { Badge } from "../components/ui/Badge";
+import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+import { ShoppingCart, Heart, Truck } from "lucide-react";
+import { sampleBooks } from "../data/mockData";
+import { Page, Book as BookType } from "../types";
+import { useWishlist } from "../hooks/useWishlist";
+import { getBooksByCategory } from "../api/category";
 
 interface BookDetailsPageProps {
   currentPage: Page;
@@ -31,9 +32,26 @@ export const BookDetailsPage = ({
   setSelectedBook,
 }: BookDetailsPageProps) => {
   const { wishlist, toggleWishlist } = useWishlist();
+  const [relatedBooks, setRelatedBooks] = useState<BookType[]>([]);
   const [isHover, setIsHover] = useState(false);
 
   const isInWishlist = wishlist.includes(selectedBook.id.toString());
+
+  // return the books by category
+  useEffect(() => {
+    const fetchRelatedBooks = async () => {
+      console.log(selectedBook);
+
+      if (!selectedBook.categoryId) return;
+      const res = await getBooksByCategory(selectedBook.categoryId);
+      if (res.success && res.data) {
+        setRelatedBooks(
+          res.data.filter((book) => book.id !== selectedBook.id).slice(0, 4)
+        );
+      }
+    };
+    fetchRelatedBooks();
+  }, [selectedBook]);
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
@@ -75,7 +93,11 @@ export const BookDetailsPage = ({
             {selectedBook.price > selectedBook.finalPrice && (
               <div className="flex items-center space-x-2 rtl:space-x-reverse">
                 <Badge variant="destructive" className="text-xs">
-                  خصم {Math.round((1 - selectedBook.finalPrice / selectedBook.price) * 100)}%
+                  خصم{" "}
+                  {Math.round(
+                    (1 - selectedBook.finalPrice / selectedBook.price) * 100
+                  )}
+                  %
                 </Badge>
                 <span className="text-lg sm:text-xl text-gray-500 line-through">
                   {selectedBook.price} ج.م
@@ -96,7 +118,8 @@ export const BookDetailsPage = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm sm:text-base">
             {selectedBook.category?.name && (
               <div>
-                <span className="font-bold">التصنيف:</span> {selectedBook.category.name}
+                <span className="font-bold">التصنيف:</span>{" "}
+                {selectedBook.category.name}
               </div>
             )}
           </div>
@@ -119,26 +142,30 @@ export const BookDetailsPage = ({
               onMouseLeave={() => setIsHover(false)}
               onClick={() => {
                 if (!isLoggedIn) {
-                  navigateTo('login');
+                  navigateTo("login");
                   return;
                 }
                 toggleWishlist(selectedBook.id.toString());
               }}
               className={`p-2 rounded-full border transition-all flex items-center justify-center
-                ${isInWishlist ? 'bg-purple-600 border-purple-600' : 'border-gray-300 bg-white'}
-                ${isHover ? 'shadow-md' : ''}
+                ${
+                  isInWishlist
+                    ? "bg-purple-600 border-purple-600"
+                    : "border-gray-300 bg-white"
+                }
+                ${isHover ? "shadow-md" : ""}
               `}
             >
               <Heart
                 className={`w-4 h-4 sm:w-4 sm:h-4
-                  ${isInWishlist ? 'text-white fill-white' : 'text-gray-600'}
+                  ${isInWishlist ? "text-white fill-white" : "text-gray-600"}
                 `}
               />
             </button>
           </div>
 
           {/* ✅ الشحن */}
-         <div className="bg-blue-50 p-3 sm:p-4 rounded-lg mt-4">
+          <div className="bg-blue-50 p-3 sm:p-4 rounded-lg mt-4">
             <div className="flex items-center space-x-2 space-x-reverse text-blue-700">
               <Truck className="w-4 h-4 sm:w-5 sm:h-5" />
               <span className="font-bold text-sm sm:text-base">شحن مجاني</span>
@@ -152,19 +179,27 @@ export const BookDetailsPage = ({
             كتب ذات صلة
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-            {sampleBooks
-              .filter((book) => book.id !== selectedBook.id)
-              .map((book) => (
-                <BookCard
-                  key={book.id}
-                  book={book}
-                  onClick={() => {
-                    setSelectedBook(book);
-                    navigateTo('book-details');
-                  }}
-                  onAddToCart={addToCart}
-                />
-              ))}
+            {relatedBooks.map((book) => (
+              <BookCard
+                key={book.id}
+                book={{
+                  id: book.id,
+                  title: book.title,
+                  author: book.author,
+                  price: book.price,
+                  description: book.description,
+                  coverImage: `http://localhost:5000/uploads/books/${book.coverImage}`,
+                  discount: book.discount,
+                  finalPrice: book.finalPrice,
+                  category: book.category?.name || "",
+                }}
+                onClick={() => {
+                  setSelectedBook(book);
+                  navigateTo("book-details");
+                }}
+                onAddToCart={addToCart}
+              />
+            ))}
           </div>
         </div>
       </div>

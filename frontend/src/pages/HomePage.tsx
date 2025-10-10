@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react';
-import { Header } from '../components/Header';
-import { Footer } from '../components/Footer';
-import { BookCard } from '../components/BookCard';
-import { Button } from '../components/ui/Button';
-import { Card, CardContent } from '../components/ui/Card';
-import { ImageWithFallback } from '../components/figma/ImageWithFallback';
-import { Book as BookType, Category, Page } from '../types';
-import { getAllBooks } from '../api/book';
-import { getAllCategories } from '../api/category'; // استيراد الدالة
+import { useEffect, useState } from "react";
+import { Header } from "../components/Header";
+import { Footer } from "../components/Footer";
+import { BookCard } from "../components/BookCard";
+import { Button } from "../components/ui/Button";
+import { Card, CardContent } from "../components/ui/Card";
+import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+import { Book as BookType, Category, Page } from "../types";
+import { getAllBooks } from "../api/book";
+import { getAllCategories } from "../api/category"; // استيراد الدالة
 
 interface HomePageProps {
   currentPage: Page;
@@ -41,7 +41,7 @@ export const HomePage = ({
       if (result.success && result.data) {
         setBooks(result.data);
       } else {
-        setErrorBooks(result.message || 'فشل تحميل الكتب');
+        setErrorBooks(result.message || "فشل تحميل الكتب");
       }
       setLoadingBooks(false);
     };
@@ -56,7 +56,7 @@ export const HomePage = ({
       if (result.success && result.data) {
         setCategories(result.data);
       } else {
-        setErrorCategories(result.message || 'فشل تحميل التصنيفات');
+        setErrorCategories(result.message || "فشل تحميل التصنيفات");
       }
       setLoadingCategories(false);
     };
@@ -65,7 +65,12 @@ export const HomePage = ({
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
-      <Header currentPage={currentPage} navigateTo={navigateTo} cartItems={cartItems} isLoggedIn={isLoggedIn} />
+      <Header
+        currentPage={currentPage}
+        navigateTo={navigateTo}
+        cartItems={cartItems}
+        isLoggedIn={isLoggedIn}
+      />
 
       {/* Hero Section */}
       <div className="bg-gradient-to-l from-purple-600 to-blue-600 text-white py-8 sm:py-12 lg:py-16">
@@ -75,10 +80,11 @@ export const HomePage = ({
               اكتشف عالم الكتب العربية
             </h1>
             <p className="text-base lg:text-xl mb-8 text-blue-100 leading-relaxed">
-              آلاف الكتب في جميع المجالات بين يديك. اقرأ، تعلم، واستمتع بأفضل الكتب العربية والمترجمة.
+              آلاف الكتب في جميع المجالات بين يديك. اقرأ، تعلم، واستمتع بأفضل
+              الكتب العربية والمترجمة.
             </p>
             <Button
-              onClick={() => navigateTo('categories')}
+              onClick={() => navigateTo("categories")}
               size="lg"
               className="bg-white text-purple-600 hover:bg-gray-100 w-full sm:w-auto"
             >
@@ -98,26 +104,36 @@ export const HomePage = ({
       {/* Categories */}
       <div className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-3">تصفح حسب التصنيف</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-3">
+            تصفح حسب التصنيف
+          </h2>
           <p className="text-gray-600">اختر من بين مجموعة واسعة من التصنيفات</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 max-w-7xl mx-auto px-4">
           {loadingCategories ? (
-            <p className="text-center text-gray-500 col-span-full">جارٍ تحميل التصنيفات...</p>
+            <p className="text-center text-gray-500 col-span-full">
+              جارٍ تحميل التصنيفات...
+            </p>
           ) : errorCategories ? (
-            <p className="text-center text-red-500 col-span-full">{errorCategories}</p>
+            <p className="text-center text-red-500 col-span-full">
+              {errorCategories}
+            </p>
           ) : categories.length === 0 ? (
-            <p className="text-center text-gray-500 col-span-full">لا توجد تصنيفات حالياً.</p>
+            <p className="text-center text-gray-500 col-span-full">
+              لا توجد تصنيفات حالياً.
+            </p>
           ) : (
             categories.map((category) => (
               <Card
                 key={category.id}
                 className="text-center hover:shadow-md transition-all duration-300 cursor-pointer group mt-4"
-                onClick={() => navigateTo('categories')}
+                onClick={() => navigateTo(`categories`)}
               >
                 <CardContent className="p-6 mt-2">
-                  <div className="text-4xl mb-2">📚</div>
-                  <h3 className="font-bold mb-1 group-hover:text-purple-600 transition-colors">{category.name}</h3>
+                  {/* <div className="text-4xl mb-2">📚</div> */}
+                  <h3 className="font-bold mb-1 group-hover:text-purple-600 transition-colors">
+                    {category.name}
+                  </h3>
                 </CardContent>
               </Card>
             ))
@@ -129,7 +145,9 @@ export const HomePage = ({
       <div className="py-12 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">الكتب المميزة</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              الكتب المميزة
+            </h2>
             <p className="text-gray-600">أحدث الإصدارات والكتب الأكثر مبيعاً</p>
           </div>
 
@@ -157,7 +175,7 @@ export const HomePage = ({
                   }}
                   onClick={() => {
                     setSelectedBook(book);
-                    navigateTo('book-details');
+                    navigateTo("book-details");
                   }}
                   onAddToCart={addToCart}
                 />
@@ -167,7 +185,7 @@ export const HomePage = ({
 
           <div className="text-center mt-12">
             <Button
-              onClick={() => navigateTo('categories')}
+              onClick={() => navigateTo("categories")}
               variant="outline"
               size="lg"
               className="border-purple-600 text-purple-600 hover:bg-purple-50 w-full sm:w-auto"

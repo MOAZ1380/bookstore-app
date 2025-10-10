@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 import { Button } from "../components/ui/Button";
-import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/Card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
 import { Label } from "../components/ui/Label";
 import { Book, Settings } from "lucide-react";
 import { Page } from "../types";
-import { loginUser } from "../api/auth"; 
+import { loginUser } from "../api/auth";
 
 interface LoginPageProps {
   navigateTo: (page: Page) => void;
