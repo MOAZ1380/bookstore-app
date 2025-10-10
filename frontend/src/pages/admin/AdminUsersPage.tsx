@@ -1,12 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { AdminHeader } from '../../components/admin/AdminHeader';
-import { AdminSidebar } from '../../components/admin/AdminSidebar';
-import { Button } from '../../components/ui/Button';
-import { Card, CardContent } from '../../components/ui/Card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/Table';
-import { Edit, Trash2, Plus } from 'lucide-react';
-import { Page } from '../../types';
-import { getAllUsers, createUser, updateUser, deleteUser } from '../../api/users';
+import React, { useEffect, useState } from "react";
+import { AdminHeader } from "../../components/admin/AdminHeader";
+import { AdminSidebar } from "../../components/admin/AdminSidebar";
+import { Button } from "../../components/ui/Button";
+import { Card, CardContent } from "../../components/ui/Card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../../components/ui/Table";
+import { Edit, Trash2, Plus } from "lucide-react";
+import { Page } from "../../types";
+import {
+  getAllUsers,
+  createUser,
+  updateUser,
+  deleteUser,
+} from "../../api/users";
 
 interface AdminUsersPageProps {
   currentPage: Page;
@@ -35,19 +47,23 @@ interface User {
 }
 
 const initialForm = {
-  name: '',
-  email: '',
-  password: '',
-  phone: '',
-  role: 'USER',
-  country: '',
-  city: '',
-  street: '',
-  house_number: '',
-  floor: '',
+  name: "",
+  email: "",
+  password: "",
+  phone: "",
+  role: "USER",
+  country: "",
+  city: "",
+  street: "",
+  house_number: "",
+  floor: "",
 };
 
-export const AdminUsersPage: React.FC<AdminUsersPageProps> = ({ currentPage, navigateTo, setIsAdmin }) => {
+export const AdminUsersPage: React.FC<AdminUsersPageProps> = ({
+  currentPage,
+  navigateTo,
+  setIsAdmin,
+}) => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -69,7 +85,7 @@ export const AdminUsersPage: React.FC<AdminUsersPageProps> = ({ currentPage, nav
       setUsers(data || []);
     } catch (err) {
       console.error(err);
-      setErrorMessage('فشل في تحميل المستخدمين');
+      setErrorMessage("فشل في تحميل المستخدمين");
     } finally {
       setLoading(false);
     }
@@ -86,16 +102,16 @@ export const AdminUsersPage: React.FC<AdminUsersPageProps> = ({ currentPage, nav
   const openEdit = (user: User) => {
     setSelectedUser(user);
     setFormData({
-      name: user.name || '',
+      name: user.name || "",
       email: user.email,
-      password: '',
-      phone: user.phone || '',
+      password: "",
+      phone: user.phone || "",
       role: user.role,
-      country: user.address?.country || '',
-      city: user.address?.city || '',
-      street: user.address?.street || '',
-      house_number: user.address?.house_number || '',
-      floor: user.address?.floor || '',
+      country: user.address?.country || "",
+      city: user.address?.city || "",
+      street: user.address?.street || "",
+      house_number: user.address?.house_number || "",
+      floor: user.address?.floor || "",
     });
     setErrorMessage(null);
     setSuccessMessage(null);
@@ -111,7 +127,9 @@ export const AdminUsersPage: React.FC<AdminUsersPageProps> = ({ currentPage, nav
     setIsSaving(false);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -120,12 +138,12 @@ export const AdminUsersPage: React.FC<AdminUsersPageProps> = ({ currentPage, nav
     setErrorMessage(null);
     setSuccessMessage(null);
 
-    if (!formData.email || !formData.email.includes('@')) {
-      setErrorMessage('الرجاء إدخال بريد إلكتروني صالح');
+    if (!formData.email || !formData.email.includes("@")) {
+      setErrorMessage("الرجاء إدخال بريد إلكتروني صالح");
       return;
     }
     if (!selectedUser && (!formData.password || formData.password.length < 6)) {
-      setErrorMessage('كلمة المرور مطلوبة ومكونة من 6 حروف على الأقل');
+      setErrorMessage("كلمة المرور مطلوبة ومكونة من 6 حروف على الأقل");
       return;
     }
 
@@ -146,16 +164,14 @@ export const AdminUsersPage: React.FC<AdminUsersPageProps> = ({ currentPage, nav
         house_number: formData.house_number,
         floor: formData.floor,
       };
-      if (Object.values(address).some(v => v)) payload.address = address;
+      if (Object.values(address).some((v) => v)) payload.address = address;
     }
 
-    
-
-      try {
-        setIsSaving(true);
+    try {
+      setIsSaving(true);
       if (selectedUser) {
         await updateUser(selectedUser.id, payload);
-        setSuccessMessage('تم تحديث بيانات المستخدم');
+        setSuccessMessage("تم تحديث بيانات المستخدم");
 
         setTimeout(() => {
           closeModal();
@@ -163,49 +179,59 @@ export const AdminUsersPage: React.FC<AdminUsersPageProps> = ({ currentPage, nav
         }, 650);
       } else {
         const newUser = await createUser(payload);
-        setSuccessMessage('تم إنشاء المستخدم بنجاح');
+        setSuccessMessage("تم إنشاء المستخدم بنجاح");
         setTimeout(() => {
           closeModal();
           loadUsers();
         }, 650);
       }
-      } catch (err: any) {
+    } catch (err: any) {
       console.error(err);
-      const msg = err?.response?.data?.message || err?.message || 'حدث خطأ';
+      const msg = err?.response?.data?.message || err?.message || "حدث خطأ";
       setErrorMessage(String(msg));
     } finally {
       setIsSaving(false);
     }
-
   };
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm('هل أنت متأكد من حذف هذا المستخدم؟')) return;
+    if (!window.confirm("هل أنت متأكد من حذف هذا المستخدم؟")) return;
     try {
       await deleteUser(id);
-      setUsers(prev => prev.filter(u => u.id !== id));
+      setUsers((prev) => prev.filter((u) => u.id !== id));
     } catch (err) {
       console.error(err);
-      setErrorMessage('فشل حذف المستخدم');
+      setErrorMessage("فشل حذف المستخدم");
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
-      <AdminHeader currentPage={currentPage} navigateTo={navigateTo} setIsAdmin={setIsAdmin} />
+      <AdminHeader
+        currentPage={currentPage}
+        navigateTo={navigateTo}
+        setIsAdmin={setIsAdmin}
+      />
       <div className="flex">
         <AdminSidebar currentPage={currentPage} navigateTo={navigateTo} />
 
         <div className="flex-1 p-4 sm:p-6 lg:p-8">
           <div className="flex justify-between items-center mb-6 sm:mb-8">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">إدارة المستخدمين</h1>
-            <Button className="bg-purple-600 hover:bg-purple-700" onClick={openCreate}>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+              إدارة المستخدمين
+            </h1>
+            <Button
+              className="bg-purple-600 hover:bg-purple-700"
+              onClick={openCreate}
+            >
               <Plus className="w-4 h-4 ml-2" /> إضافة مستخدم جديد
             </Button>
           </div>
 
           {loading ? (
-            <div className="text-center mt-10 text-gray-600">جارٍ تحميل المستخدمين...</div>
+            <div className="text-center mt-10 text-gray-600">
+              جارٍ تحميل المستخدمين...
+            </div>
           ) : (
             <Card>
               <CardContent className="p-4 sm:p-6">
@@ -213,7 +239,9 @@ export const AdminUsersPage: React.FC<AdminUsersPageProps> = ({ currentPage, nav
                   <TableHeader>
                     <TableRow>
                       <TableHead className="text-right">الاسم</TableHead>
-                      <TableHead className="text-right">البريد الإلكتروني</TableHead>
+                      <TableHead className="text-right">
+                        البريد الإلكتروني
+                      </TableHead>
                       <TableHead className="text-right">الهاتف</TableHead>
                       <TableHead className="text-right">الدور</TableHead>
                       <TableHead className="text-right">العنوان</TableHead>
@@ -221,21 +249,34 @@ export const AdminUsersPage: React.FC<AdminUsersPageProps> = ({ currentPage, nav
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {users.map(user => (
+                    {users.map((user) => (
                       <TableRow key={user.id}>
-                        <TableCell>{user.name || '-'}</TableCell>
+                        <TableCell>{user.name || "-"}</TableCell>
                         <TableCell>{user.email}</TableCell>
-                        <TableCell>{user.phone || '-'}</TableCell>
+                        <TableCell>{user.phone || "-"}</TableCell>
                         <TableCell>{user.role}</TableCell>
                         <TableCell>
-                          {user.address ? `${user.address.country || ''}, ${user.address.city || ''}, ${user.address.street || ''}` : '-'}
+                          {user.address
+                            ? `${user.address.country || ""}, ${
+                                user.address.city || ""
+                              }, ${user.address.street || ""}`
+                            : "-"}
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-2">
-                            <Button variant="outline" size="sm" onClick={() => openEdit(user)}>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => openEdit(user)}
+                            >
                               <Edit className="w-4 h-4 ml-2" /> تعديل
                             </Button>
-                            <Button variant="outline" size="sm" className="text-red-600 border-red-600" onClick={() => handleDelete(user.id)}>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-red-600 border-red-600"
+                              onClick={() => handleDelete(user.id)}
+                            >
                               <Trash2 className="w-4 h-4 ml-2" /> حذف
                             </Button>
                           </div>
@@ -256,35 +297,85 @@ export const AdminUsersPage: React.FC<AdminUsersPageProps> = ({ currentPage, nav
           <div className="bg-white rounded-xl shadow-2xl p-4 sm:p-6 w-full max-w-xl sm:max-w-2xl overflow-y-auto max-h-[90vh] border border-gray-200">
             <div className="flex items-start justify-between mb-2">
               <div>
-                <h2 className="text-2xl font-bold text-purple-700">{selectedUser ? 'تعديل المستخدم' : 'إضافة مستخدم جديد'}</h2>
+                <h2 className="text-2xl font-bold text-purple-700">
+                  {selectedUser ? "تعديل المستخدم" : "إضافة مستخدم جديد"}
+                </h2>
                 <p className="text-sm text-gray-500 mt-1">
-                  {selectedUser ? 'قم بتحرير بيانات المستخدم ثم اضغط تحديث' : 'املأ الاسم، الإيميل وكلمة المرور لإنشاء مستخدم جديد'}
+                  {selectedUser
+                    ? "قم بتحرير بيانات المستخدم ثم اضغط تحديث"
+                    : "املأ الاسم، الإيميل وكلمة المرور لإنشاء مستخدم جديد"}
                 </p>
               </div>
-              <Button type="button" variant="ghost" onClick={closeModal} disabled={isSaving} className="text-gray-500 hover:text-gray-700">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={closeModal}
+                disabled={isSaving}
+                className="text-gray-500 hover:text-gray-700"
+              >
                 إغلاق
               </Button>
             </div>
 
-            <form onSubmit={handleSubmit} className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {errorMessage && <div className="col-span-2 text-sm text-red-700 bg-red-50 border border-red-100 p-2 rounded">{errorMessage}</div>}
-              {successMessage && <div className="col-span-2 text-sm text-green-700 bg-green-50 border border-green-100 p-2 rounded">{successMessage}</div>}
+            <form
+              onSubmit={handleSubmit}
+              className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4"
+            >
+              {errorMessage && (
+                <div className="col-span-2 text-sm text-red-700 bg-red-50 border border-red-100 p-2 rounded">
+                  {errorMessage}
+                </div>
+              )}
+              {successMessage && (
+                <div className="col-span-2 text-sm text-green-700 bg-green-50 border border-green-100 p-2 rounded">
+                  {successMessage}
+                </div>
+              )}
 
               {/* Name & Email */}
               <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-gray-700">الاسم</label>
-                <input name="name" value={formData.name} onChange={handleChange} placeholder="الاسم" className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-purple-400" required />
+                <label className="text-sm font-medium text-gray-700">
+                  الاسم
+                </label>
+                <input
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="الاسم"
+                  className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-purple-400"
+                  required
+                />
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-gray-700">البريد الإلكتروني</label>
-                <input name="email" type="email" value={formData.email} onChange={handleChange} placeholder="البريد الإلكتروني" className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-purple-400" required />
+                <label className="text-sm font-medium text-gray-700">
+                  البريد الإلكتروني
+                </label>
+                <input
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="البريد الإلكتروني"
+                  className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-purple-400"
+                  required
+                />
               </div>
 
               {/* Password */}
               {!selectedUser && (
                 <div className="flex flex-col gap-2 col-span-2">
-                  <label className="text-sm font-medium text-gray-700">كلمة المرور</label>
-                  <input name="password" type="password" value={formData.password} onChange={handleChange} placeholder="كلمة المرور" className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-purple-400" required />
+                  <label className="text-sm font-medium text-gray-700">
+                    كلمة المرور
+                  </label>
+                  <input
+                    name="password"
+                    type="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="كلمة المرور"
+                    className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-purple-400"
+                    required
+                  />
                 </div>
               )}
 
@@ -292,26 +383,73 @@ export const AdminUsersPage: React.FC<AdminUsersPageProps> = ({ currentPage, nav
               {selectedUser && (
                 <>
                   <div className="flex flex-col gap-2">
-                    <label className="text-sm font-medium text-gray-700">رقم الهاتف</label>
-                    <input name="phone" value={formData.phone} onChange={handleChange} placeholder="رقم الهاتف" className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-purple-400" />
+                    <label className="text-sm font-medium text-gray-700">
+                      رقم الهاتف
+                    </label>
+                    <input
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      placeholder="رقم الهاتف"
+                      className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-purple-400"
+                    />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label className="text-sm font-medium text-gray-700">الدور</label>
-                    <select name="role" value={formData.role} onChange={handleChange} className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-purple-400">
+                    <label className="text-sm font-medium text-gray-700">
+                      الدور
+                    </label>
+                    <select
+                      name="role"
+                      value={formData.role}
+                      onChange={handleChange}
+                      className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-purple-400"
+                    >
                       <option value="USER">مستخدم</option>
                       <option value="ADMIN">مدير</option>
                     </select>
                   </div>
                   <div className="col-span-2">
                     <hr className="my-2" />
-                    <h3 className="font-semibold text-gray-700 mb-2">العنوان (اختياري)</h3>
+                    <h3 className="font-semibold text-gray-700 mb-2">
+                      العنوان (اختياري)
+                    </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      <input name="country" value={formData.country} onChange={handleChange} placeholder="الدولة" className="border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-purple-400" />
-                      <input name="city" value={formData.city} onChange={handleChange} placeholder="المدينة" className="border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-purple-400" />
-                      <input name="street" value={formData.street} onChange={handleChange} placeholder="الشارع" className="border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-purple-400" />
+                      <input
+                        name="country"
+                        value={formData.country}
+                        onChange={handleChange}
+                        placeholder="الدولة"
+                        className="border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-purple-400"
+                      />
+                      <input
+                        name="city"
+                        value={formData.city}
+                        onChange={handleChange}
+                        placeholder="المدينة"
+                        className="border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-purple-400"
+                      />
+                      <input
+                        name="street"
+                        value={formData.street}
+                        onChange={handleChange}
+                        placeholder="الشارع"
+                        className="border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-purple-400"
+                      />
                       <div className="flex gap-2">
-                        <input name="house_number" value={formData.house_number} onChange={handleChange} placeholder="رقم المنزل" className="w-1/2 border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-purple-400" />
-                        <input name="floor" value={formData.floor} onChange={handleChange} placeholder="الطابق" className="w-1/2 border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-purple-400" />
+                        <input
+                          name="house_number"
+                          value={formData.house_number}
+                          onChange={handleChange}
+                          placeholder="رقم المنزل"
+                          className="w-1/2 border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-purple-400"
+                        />
+                        <input
+                          name="floor"
+                          value={formData.floor}
+                          onChange={handleChange}
+                          placeholder="الطابق"
+                          className="w-1/2 border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-purple-400"
+                        />
                       </div>
                     </div>
                   </div>
@@ -320,10 +458,30 @@ export const AdminUsersPage: React.FC<AdminUsersPageProps> = ({ currentPage, nav
 
               {/* Buttons */}
               <div className="col-span-2 flex flex-wrap justify-end gap-2 mt-4">
-                
-                <Button type="button" variant="outline" onClick={closeModal} disabled={isSaving}>إلغاء</Button>
-                <Button type="submit" className={selectedUser ? 'bg-green-600 hover:bg-green-700 text-white font-bold' : 'bg-purple-600 hover:bg-purple-700 text-white font-bold'} disabled={isSaving}>
-                  {isSaving ? (selectedUser ? 'جاري تحديث البيانات...' : 'جاري الإنشاء...') : (selectedUser ? 'تحديث بيانات المستخدم' : 'إنشاء المستخدم')}
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={closeModal}
+                  disabled={isSaving}
+                >
+                  إلغاء
+                </Button>
+                <Button
+                  type="submit"
+                  className={
+                    selectedUser
+                      ? "bg-green-600 hover:bg-green-700 text-white font-bold"
+                      : "bg-purple-600 hover:bg-purple-700 text-white font-bold"
+                  }
+                  disabled={isSaving}
+                >
+                  {isSaving
+                    ? selectedUser
+                      ? "جاري تحديث البيانات..."
+                      : "جاري الإنشاء..."
+                    : selectedUser
+                    ? "تحديث بيانات المستخدم"
+                    : "إنشاء المستخدم"}
                 </Button>
               </div>
             </form>
