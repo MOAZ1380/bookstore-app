@@ -1,4 +1,3 @@
-// src/components/BookCard.tsx
 import { Button } from "./ui/Button";
 import { Card, CardContent } from "./ui/Card";
 import { Badge } from "./ui/Badge";
@@ -12,7 +11,7 @@ interface BookCardProps {
   book: Book;
   showAddToCart?: boolean;
   onClick?: () => void;
-  onAddToCart?: (book: Book) => void;
+  onAddToCart?: (book: Book, quantity: number) => void; // ✅ نرسل الكمية
 }
 
 export const BookCard = ({
@@ -23,6 +22,7 @@ export const BookCard = ({
 }: BookCardProps) => {
   const { wishlist, toggleWishlist } = useWishlist();
   const [isHover, setIsHover] = useState(false);
+  const [quantity, setQuantity] = useState(1); // ✅ حالة الكمية
 
   const isInWishlist = wishlist.includes(book.id.toString());
 
@@ -51,7 +51,7 @@ export const BookCard = ({
         {/* ✅ زر المفضلة */}
         <button
           onClick={(e) => {
-            e.stopPropagation(); // يمنع تفعيل onClick تبع الكارد
+            e.stopPropagation();
             toggleWishlist(book.id.toString());
           }}
           className={`absolute top-2 right-2 p-2 rounded-full transition-all 
@@ -78,6 +78,7 @@ export const BookCard = ({
         </div>
 
         {/* ✅ السعر */}
+        {/* ✅ السعر والمخزون */}
         <div className="flex items-center justify-between mt-auto">
           <div className="text-right">
             <span className="text-base sm:text-lg font-bold text-purple-600">
@@ -88,15 +89,44 @@ export const BookCard = ({
                 {book.price} ج.م
               </span>
             )}
+
+            {/* ✅ عرض المخزون */}
+            <div className="text-xs sm:text-sm text-gray-500 mt-1">
+              {book.stock > 0 ? (
+                <span>
+                  متاح:{" "}
+                  <span className="font-semibold text-green-600">
+                    {book.stock}
+                  </span>{" "}
+                  نسخة
+                </span>
+              ) : (
+                <span className="text-red-600 font-semibold">غير متوفر</span>
+              )}
+            </div>
           </div>
         </div>
       </CardContent>
 
-      {/* ✅ زر الإضافة إلى السلة */}
+      {/* ✅ اختيار الكمية وزر الإضافة للسلة */}
       {showAddToCart && (
-        <div className="p-4 pt-0">
+        <div className="p-4 pt-0 space-y-2">
+          <div className="flex items-center justify-between">
+            <label htmlFor="quantity" className="text-sm text-gray-700">
+              الكمية:
+            </label>
+            <input
+              id="quantity"
+              type="number"
+              min={1}
+              value={quantity}
+              onChange={(e) => setQuantity(Number(e.target.value))}
+              className="w-16 border rounded-md text-center text-sm py-1"
+            />
+          </div>
+
           <Button
-            onClick={() => onAddToCart?.(book)}
+            onClick={() => onAddToCart?.(book, quantity)} // ✅ نمرر الكمية
             className="w-full bg-purple-600 hover:bg-purple-700 text-sm sm:text-base py-2"
           >
             أضف إلى السلة

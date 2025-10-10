@@ -1,32 +1,31 @@
-import { useState } from 'react';
-import { HomePage } from './pages/HomePage';
-import { CategoriesPage } from './pages/CategoriesPage';
-import { BookDetailsPage } from './pages/BookDetailsPage';
-import { CartPage } from './pages/CartPage';
-import { LoginPage } from './pages/LoginPage';
-import { RegisterPage } from './pages/RegisterPage';
-import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
-import { OTPPage } from './pages/OTPPage';
-import { ResetPasswordPage } from './pages/ResetPasswordPage';
-import { MyOrdersPage } from './pages/MyOrdersPage';
-import { AdminLoginPage } from './pages/admin/AdminLoginPage';
-import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
-import { AdminCategoriesPage } from './pages/admin/AdminCategoriesPage';
-import  AdminBooksPage  from './pages/admin/AdminBooksPage';
-import { AdminOrdersPage } from './pages/admin/AdminOrdersPage';
-import { AdminUsersPage } from './pages/admin/AdminUsersPage';
-import { Book, Page } from './types';
-import './index.css'
-import { WishlistPage } from './pages/WishlistPage';
-
+import { useState } from "react";
+import { HomePage } from "./pages/HomePage";
+import { CategoriesPage } from "./pages/CategoriesPage";
+import { BookDetailsPage } from "./pages/BookDetailsPage";
+import { CartPage } from "./pages/CartPage";
+import { LoginPage } from "./pages/LoginPage";
+import { RegisterPage } from "./pages/RegisterPage";
+import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
+import { OTPPage } from "./pages/OTPPage";
+import { ResetPasswordPage } from "./pages/ResetPasswordPage";
+import { MyOrdersPage } from "./pages/MyOrdersPage";
+import { AdminLoginPage } from "./pages/admin/AdminLoginPage";
+import { AdminDashboardPage } from "./pages/admin/AdminDashboardPage";
+import { AdminCategoriesPage } from "./pages/admin/AdminCategoriesPage";
+import AdminBooksPage from "./pages/admin/AdminBooksPage";
+import { AdminOrdersPage } from "./pages/admin/AdminOrdersPage";
+import { AdminUsersPage } from "./pages/admin/AdminUsersPage";
+import { Book, Page } from "./types";
+import "./index.css";
+import { WishlistPage } from "./pages/WishlistPage";
 
 export const App = () => {
-  const [currentPage, setCurrentPage] = useState<Page>('home');
+  const [currentPage, setCurrentPage] = useState<Page>("home");
   const [cartItems, setCartItems] = useState<Book[]>([]);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [otpCode, setOtpCode] = useState('');
+  const [otpCode, setOtpCode] = useState("");
 
   const navigateTo = (page: Page) => setCurrentPage(page);
 
@@ -41,25 +40,63 @@ export const App = () => {
   const renderPage = () => {
     if (isAdmin) {
       switch (currentPage) {
-        case 'admin-dashboard':
-          return <AdminDashboardPage currentPage={currentPage} navigateTo={navigateTo} setIsAdmin={setIsAdmin} />;
-        case 'admin-categories':
-          return <AdminCategoriesPage currentPage={currentPage} navigateTo={navigateTo} setIsAdmin={setIsAdmin} />;
-        case 'admin-books':
-          return <AdminBooksPage currentPage={currentPage} navigateTo={navigateTo} setIsAdmin={setIsAdmin} />;
-        case 'admin-orders':
-          return <AdminOrdersPage currentPage={currentPage} navigateTo={navigateTo} setIsAdmin={setIsAdmin} />;
-        case 'admin-users':
-          return <AdminUsersPage currentPage={currentPage} navigateTo={navigateTo} setIsAdmin={setIsAdmin} />;
-        case 'admin-login':
-          return <AdminLoginPage navigateTo={navigateTo} setIsAdmin={setIsAdmin} />;
+        case "admin-dashboard":
+          return (
+            <AdminDashboardPage
+              currentPage={currentPage}
+              navigateTo={navigateTo}
+              setIsAdmin={setIsAdmin}
+            />
+          );
+        case "admin-categories":
+          return (
+            <AdminCategoriesPage
+              currentPage={currentPage}
+              navigateTo={navigateTo}
+              setIsAdmin={setIsAdmin}
+            />
+          );
+        case "admin-books":
+          return (
+            <AdminBooksPage
+              currentPage={currentPage}
+              navigateTo={navigateTo}
+              setIsAdmin={setIsAdmin}
+            />
+          );
+        case "admin-orders":
+          return (
+            <AdminOrdersPage
+              currentPage={currentPage}
+              navigateTo={navigateTo}
+              setIsAdmin={setIsAdmin}
+            />
+          );
+        case "admin-users":
+          return (
+            <AdminUsersPage
+              currentPage={currentPage}
+              navigateTo={navigateTo}
+              setIsAdmin={setIsAdmin}
+            />
+          );
+        case "admin-login":
+          return (
+            <AdminLoginPage navigateTo={navigateTo} setIsAdmin={setIsAdmin} />
+          );
         default:
-          return <AdminDashboardPage currentPage={currentPage} navigateTo={navigateTo} setIsAdmin={setIsAdmin} />;
+          return (
+            <AdminDashboardPage
+              currentPage={currentPage}
+              navigateTo={navigateTo}
+              setIsAdmin={setIsAdmin}
+            />
+          );
       }
     }
 
     switch (currentPage) {
-      case 'home':
+      case "home":
         return (
           <HomePage
             currentPage={currentPage}
@@ -70,7 +107,7 @@ export const App = () => {
             addToCart={addToCart}
           />
         );
-      case 'categories':
+      case "categories":
         return (
           <CategoriesPage
             currentPage={currentPage}
@@ -81,7 +118,7 @@ export const App = () => {
             addToCart={addToCart}
           />
         );
-      case 'book-details':
+      case "book-details":
         return selectedBook ? (
           <BookDetailsPage
             currentPage={currentPage}
@@ -102,7 +139,7 @@ export const App = () => {
             addToCart={addToCart}
           />
         );
-      case 'cart':
+      case "cart":
         return (
           <CartPage
             currentPage={currentPage}
@@ -112,17 +149,32 @@ export const App = () => {
             removeFromCart={removeFromCart}
           />
         );
-      case 'login':
-        return <LoginPage navigateTo={navigateTo} setIsLoggedIn={setIsLoggedIn} />;
-      case 'register':
-        return <RegisterPage navigateTo={navigateTo} setIsLoggedIn={setIsLoggedIn} />;
-      case 'forgot-password':
+      case "login":
+        return (
+          <LoginPage navigateTo={navigateTo} setIsLoggedIn={setIsLoggedIn} />
+        );
+      case "register":
+        return (
+          <RegisterPage navigateTo={navigateTo} setIsLoggedIn={setIsLoggedIn} />
+        );
+      case "forgot-password":
         return <ForgotPasswordPage navigateTo={navigateTo} />;
-      case 'otp':
-        return <OTPPage navigateTo={navigateTo} otpCode={otpCode} setOtpCode={setOtpCode} />;
-      case 'reset-password':
-        return <ResetPasswordPage navigateTo={navigateTo} setIsLoggedIn={setIsLoggedIn} />;
-      case 'my-orders':
+      case "otp":
+        return (
+          <OTPPage
+            navigateTo={navigateTo}
+            otpCode={otpCode}
+            setOtpCode={setOtpCode}
+          />
+        );
+      case "reset-password":
+        return (
+          <ResetPasswordPage
+            navigateTo={navigateTo}
+            setIsLoggedIn={setIsLoggedIn}
+          />
+        );
+      case "my-orders":
         return (
           <MyOrdersPage
             currentPage={currentPage}
@@ -131,17 +183,21 @@ export const App = () => {
             isLoggedIn={isLoggedIn}
           />
         );
-      case 'admin-login':
-        return <AdminLoginPage navigateTo={navigateTo} setIsAdmin={setIsAdmin} />;
-      case 'wishlist':
-          return (
-            <WishlistPage
-              currentPage={currentPage}
-              navigateTo={navigateTo}
-              cartItems={cartItems}
-              isLoggedIn={isLoggedIn}
-            />
-          );
+      case "admin-login":
+        return (
+          <AdminLoginPage navigateTo={navigateTo} setIsAdmin={setIsAdmin} />
+        );
+      case "wishlist":
+        return (
+          <WishlistPage
+            currentPage={currentPage}
+            navigateTo={navigateTo}
+            cartItems={cartItems}
+            isLoggedIn={isLoggedIn}
+            addToCart={addToCart}
+            setSelectedBook={setSelectedBook}
+          />
+        );
       default:
         return (
           <HomePage

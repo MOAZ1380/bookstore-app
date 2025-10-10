@@ -140,6 +140,7 @@ export const CategoriesPage = ({
                   discount: book.discount,
                   finalPrice: book.finalPrice,
                   category: book.category?.name || "",
+                  stock: book.stock,
                 }}
                 onClick={() => {
                   setSelectedBook(book);

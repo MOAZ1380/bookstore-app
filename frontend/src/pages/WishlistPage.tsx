@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
 import { getWishlist, removeFromWishlist } from "../api/whishlist";
-import { Button } from "../components/ui/Button";
-import { BookCard } from "../components/BookCard";
+import { addCartItem } from "../api/cart";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
-import { Page, Book } from "../types";
+import { BookCard } from "../components/BookCard";
+import { Button } from "../components/ui/Button";
+import { Page, Book as BookType, Category } from "../types";
 
 interface WishlistPageProps {
   currentPage: Page;
   navigateTo: (page: Page) => void;
-  cartItems: Book[];
+  cartItems: BookType[];
   isLoggedIn: boolean;
+  addToCart: (book: BookType) => void;
+  setSelectedBook: (book: BookType) => void;
 }
 
 export const WishlistPage = ({
@@ -18,37 +21,67 @@ export const WishlistPage = ({
   navigateTo,
   cartItems,
   isLoggedIn,
+  addToCart,
+  setSelectedBook,
 }: WishlistPageProps) => {
-  const [wishlist, setWishlist] = useState<Book[]>([]);
+  const [wishlist, setWishlist] = useState<BookType[]>([]);
   const [loading, setLoading] = useState(true);
+  const [addingBookId, setAddingBookId] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!isLoggedIn) return; // ✅ ما تعملش fetch لو مش داخل
+    if (!isLoggedIn) return;
+
     async function fetchWishlist() {
       try {
         const data = await getWishlist();
-        setWishlist(data);
+        setWishlist(data.map((item) => item.book));
       } catch (err) {
-        console.error("Failed to fetch wishlist:", err);
+        console.error("❌ Failed to fetch wishlist:", err);
       } finally {
         setLoading(false);
       }
     }
+
     fetchWishlist();
   }, [isLoggedIn]);
 
-  async function handleRemove(bookId: number) {
+  const handleRemove = async (bookId: number) => {
     try {
       await removeFromWishlist(String(bookId));
       setWishlist((prev) => prev.filter((b) => b.id !== bookId));
     } catch (err) {
-      console.error("Failed to remove from wishlist:", err);
+      console.error("❌ Failed to remove from wishlist:", err);
     }
-  }
+  };
+
+  // ✅ نفس منطق BookDetailsPage
+  const handleAddToCart = async (book: Book, quantity: number = 1) => {
+    if (!isLoggedIn) {
+      navigateTo("login");
+      return;
+    }
+
+    try {
+      setAddingBookId(book.id);
+      const res = await addCartItem({
+        bookId: book.id, // ✅ زي ما عامل في BookDetailsPage
+        quantity,
+      });
+
+      console.log("✅ Added to cart:", res);
+      addToCart(book);
+      alert("تمت إضافة المنتج إلى السلة بنجاح 🛒");
+    } catch (error: any) {
+      console.error("❌ Error adding to cart:", error);
+      console.log("📦 Response:", error?.response?.data);
+      alert("حدث خطأ أثناء إضافة المنتج إلى السلة");
+    } finally {
+      setAddingBookId(null);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
-      {/* ✅ Header */}
       <Header
         currentPage={currentPage}
         navigateTo={navigateTo}
@@ -61,7 +94,6 @@ export const WishlistPage = ({
           قائمة المفضلة
         </h1>
 
-        {/* ✅ لو المستخدم مش داخل */}
         {!isLoggedIn ? (
           <div className="text-center text-gray-600">
             <p className="text-lg mb-4">يجب تسجيل الدخول لعرض قائمة المفضلة</p>
@@ -78,33 +110,38 @@ export const WishlistPage = ({
           <p className="text-center text-gray-500">قائمة المفضلة فارغة</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {wishlist.map((book) => (
-              <div
-                key={book.id}
-                className="border rounded-lg p-3 shadow-sm hover:shadow-md transition"
-              >
+            {wishlist.map((book) => {
+              return (
                 <BookCard
+                  key={book.id}
                   book={{
-                    id: book.book.id,
-                    title: book.book.title,
-                    author: book.book.author,
-                    price: Number(book.book.price),
-                    coverImage: `http://localhost:5000/uploads/books/${book.book.coverImage}`,
-                    description: book.book.description,
-                    discount: book.book.discount,
+                    id: book.id,
+                    title: book.title,
+                    author: book.author,
+                    price: Number(book.price),
+                    coverImage: `http://localhost:5000/uploads/books/${book.coverImage}`,
+                    description: book.description,
+                    discount: book.discount,
                     finalPrice:
-                      Number(book.book.price) -
-                      (Number(book.book.price) * (book.book.discount || 0)) / 100,
-                    category: book.book.category?.name || "غير مصنف",
+                      Number(book.price) -
+                      (Number(book.price) * (book.discount || 0)) / 100,
+                    category: book.category?.name || "غير مصنف",
+                    stock: book.stock,
                   }}
+                  onClick={() => {
+                    setSelectedBook(book);
+                    navigateTo("book-details");
+                  }}
+                  onAddToCart={(book, quantity) =>
+                    handleAddToCart(book, quantity)
+                  }
                 />
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
 
-      {/* ✅ Footer */}
       <Footer navigateTo={navigateTo} />
     </div>
   );

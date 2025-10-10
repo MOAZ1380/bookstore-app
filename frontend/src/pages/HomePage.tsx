@@ -7,7 +7,8 @@ import { Card, CardContent } from "../components/ui/Card";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { Book as BookType, Category, Page } from "../types";
 import { getAllBooks } from "../api/book";
-import { getAllCategories } from "../api/category"; // استيراد الدالة
+import { getAllCategories } from "../api/category";
+import { addCartItem } from "../api/cart";
 
 interface HomePageProps {
   currentPage: Page;
@@ -15,7 +16,6 @@ interface HomePageProps {
   cartItems: BookType[];
   isLoggedIn: boolean;
   setSelectedBook: (book: BookType) => void;
-  addToCart: (book: BookType) => void;
 }
 
 export const HomePage = ({
@@ -24,42 +24,61 @@ export const HomePage = ({
   cartItems,
   isLoggedIn,
   setSelectedBook,
-  addToCart,
 }: HomePageProps) => {
   const [books, setBooks] = useState<BookType[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]); // state للـ categories
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loadingBooks, setLoadingBooks] = useState(true);
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [errorBooks, setErrorBooks] = useState<string | null>(null);
   const [errorCategories, setErrorCategories] = useState<string | null>(null);
 
-  // fetch books
+  // 🛒 إضافة كتاب إلى السلة
+  const handleAddToCart = async (book: BookType, quantity: number) => {
+    try {
+      const response = await addCartItem({
+        bookId: book.id,
+        quantity,
+      });
+      console.log("📦 Cart response:", response);
+      alert("تمت إضافة الكتاب إلى السلة بنجاح ✅");
+    } catch (error) {
+      alert("حدث خطأ أثناء الإضافة إلى السلة ❌");
+    }
+  };
+
+  // 📚 جلب الكتب
   useEffect(() => {
     const fetchBooks = async () => {
       setLoadingBooks(true);
       const result = await getAllBooks();
+
       if (result.success && result.data) {
         setBooks(result.data);
       } else {
         setErrorBooks(result.message || "فشل تحميل الكتب");
       }
+
       setLoadingBooks(false);
     };
+
     fetchBooks();
   }, []);
 
-  // fetch categories
+  // 🏷️ جلب التصنيفات
   useEffect(() => {
     const fetchCategories = async () => {
       setLoadingCategories(true);
       const result = await getAllCategories();
+
       if (result.success && result.data) {
         setCategories(result.data);
       } else {
         setErrorCategories(result.message || "فشل تحميل التصنيفات");
       }
+
       setLoadingCategories(false);
     };
+
     fetchCategories();
   }, []);
 
@@ -72,7 +91,7 @@ export const HomePage = ({
         isLoggedIn={isLoggedIn}
       />
 
-      {/* Hero Section */}
+      {/* 🟣 قسم البداية (Hero Section) */}
       <div className="bg-gradient-to-l from-purple-600 to-blue-600 text-white py-8 sm:py-12 lg:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           <div className="text-right order-2 lg:order-1">
@@ -91,6 +110,7 @@ export const HomePage = ({
               تصفح الكتب
             </Button>
           </div>
+
           <div className="order-1 lg:order-2">
             <ImageWithFallback
               src="https://images.unsplash.com/photo-1588618319344-424aa94f749e?auto=format&fit=crop&w=1080&q=80"
@@ -101,7 +121,7 @@ export const HomePage = ({
         </div>
       </div>
 
-      {/* Categories */}
+      {/* 🏷️ التصنيفات */}
       <div className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-3">
@@ -109,6 +129,7 @@ export const HomePage = ({
           </h2>
           <p className="text-gray-600">اختر من بين مجموعة واسعة من التصنيفات</p>
         </div>
+
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 max-w-7xl mx-auto px-4">
           {loadingCategories ? (
             <p className="text-center text-gray-500 col-span-full">
@@ -127,10 +148,9 @@ export const HomePage = ({
               <Card
                 key={category.id}
                 className="text-center hover:shadow-md transition-all duration-300 cursor-pointer group mt-4"
-                onClick={() => navigateTo(`categories`)}
+                onClick={() => navigateTo("categories")}
               >
                 <CardContent className="p-6 mt-2">
-                  {/* <div className="text-4xl mb-2">📚</div> */}
                   <h3 className="font-bold mb-1 group-hover:text-purple-600 transition-colors">
                     {category.name}
                   </h3>
@@ -141,7 +161,7 @@ export const HomePage = ({
         </div>
       </div>
 
-      {/* Featured Books */}
+      {/* 📚 الكتب المميزة */}
       <div className="py-12 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -172,12 +192,15 @@ export const HomePage = ({
                     discount: book.discount,
                     finalPrice: book.finalPrice,
                     category: book.category.name,
+                    stock: book.stock,
                   }}
                   onClick={() => {
                     setSelectedBook(book);
                     navigateTo("book-details");
                   }}
-                  onAddToCart={addToCart}
+                  onAddToCart={(book, quantity) =>
+                    handleAddToCart(book, quantity)
+                  }
                 />
               ))}
             </div>

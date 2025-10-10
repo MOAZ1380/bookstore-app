@@ -1,4 +1,3 @@
-// src/pages/BookDetailsPage.tsx
 import { useState, useEffect } from "react";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
@@ -6,11 +5,11 @@ import { BookCard } from "../components/BookCard";
 import { Button } from "../components/ui/Button";
 import { Badge } from "../components/ui/Badge";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
-import { ShoppingCart, Heart, Truck } from "lucide-react";
-import { sampleBooks } from "../data/mockData";
+import { ShoppingCart, Heart, Truck, Plus, Minus } from "lucide-react";
 import { Page, Book as BookType } from "../types";
 import { useWishlist } from "../hooks/useWishlist";
 import { getBooksByCategory } from "../api/category";
+import { addCartItem } from "../api/cart"; // ✅ استيراد API الكارت
 
 interface BookDetailsPageProps {
   currentPage: Page;
@@ -34,14 +33,13 @@ export const BookDetailsPage = ({
   const { wishlist, toggleWishlist } = useWishlist();
   const [relatedBooks, setRelatedBooks] = useState<BookType[]>([]);
   const [isHover, setIsHover] = useState(false);
+  const [quantity, setQuantity] = useState(1); // ✅ الكمية
 
   const isInWishlist = wishlist.includes(selectedBook.id.toString());
 
-  // return the books by category
+  // ✅ جلب الكتب ذات الصلة
   useEffect(() => {
     const fetchRelatedBooks = async () => {
-      console.log(selectedBook);
-
       if (!selectedBook.categoryId) return;
       const res = await getBooksByCategory(selectedBook.categoryId);
       if (res.success && res.data) {
@@ -52,6 +50,28 @@ export const BookDetailsPage = ({
     };
     fetchRelatedBooks();
   }, [selectedBook]);
+
+  // ✅ عند الضغط على زر إضافة للسلة
+  const handleAddToCart = async () => {
+    if (!isLoggedIn) {
+      navigateTo("login");
+      return;
+    }
+
+    try {
+      const res = await addCartItem({
+        bookId: selectedBook.id,
+        quantity,
+      });
+
+      console.log("✅ Added to cart:", res);
+      addToCart(selectedBook); // لتحديث الواجهة محلياً
+      alert("تمت إضافة المنتج إلى السلة بنجاح 🛒");
+    } catch (error) {
+      console.error("❌ Error adding to cart:", error);
+      alert("حدث خطأ أثناء إضافة المنتج إلى السلة");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
@@ -76,20 +96,19 @@ export const BookDetailsPage = ({
             )}
           </div>
 
-          {/* ✅ العنوان والمؤلف */}
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 leading-tight">
+          {/* ✅ العنوان */}
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
             {selectedBook.title}
           </h1>
-          <p className="text-base sm:text-lg lg:text-xl text-gray-600 mb-4">
+          <p className="text-lg text-gray-600 mb-4">
             بقلم: {selectedBook.author}
           </p>
 
           {/* ✅ السعر والخصم */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-2 sm:space-y-0 mb-6">
-            <span className="text-2xl sm:text-3xl font-bold text-purple-600">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
+            <span className="text-3xl font-bold text-purple-600">
               {selectedBook.finalPrice} ج.م
             </span>
-
             {selectedBook.price > selectedBook.finalPrice && (
               <div className="flex items-center space-x-2 rtl:space-x-reverse">
                 <Badge variant="destructive" className="text-xs">
@@ -99,7 +118,7 @@ export const BookDetailsPage = ({
                   )}
                   %
                 </Badge>
-                <span className="text-lg sm:text-xl text-gray-500 line-through">
+                <span className="text-xl text-gray-500 line-through">
                   {selectedBook.price} ج.م
                 </span>
               </div>
@@ -108,35 +127,42 @@ export const BookDetailsPage = ({
 
           {/* ✅ الوصف */}
           <div className="space-y-4">
-            <h3 className="text-base sm:text-lg font-bold">وصف الكتاب</h3>
-            <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
+            <h3 className="font-bold">وصف الكتاب</h3>
+            <p className="text-gray-700 leading-relaxed">
               {selectedBook.description}
             </p>
           </div>
 
-          {/* ✅ معلومات إضافية */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm sm:text-base">
-            {selectedBook.category?.name && (
-              <div>
-                <span className="font-bold">التصنيف:</span>{" "}
-                {selectedBook.category.name}
-              </div>
-            )}
-          </div>
+          {/* ✅ زر الكمية + السلة + القلب */}
+          <div className="flex items-center gap-4 mt-6">
+            {/* 🔢 التحكم في الكمية */}
+            <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+              <button
+                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                className="px-3 py-2 hover:bg-gray-100"
+              >
+                <Minus className="w-4 h-4" />
+              </button>
+              <span className="px-4 py-2 font-medium">{quantity}</span>
+              <button
+                onClick={() => setQuantity((q) => q + 1)}
+                className="px-3 py-2 hover:bg-gray-100"
+              >
+                <Plus className="w-4 h-4" />
+              </button>
+            </div>
 
-          {/* ✅ الأزرار */}
-          <div className="flex items-center sm:justify-start gap-3 sm:gap-4 mt-4">
-            {/* زر السلة */}
+            {/* 🛒 زر إضافة للسلة */}
             <Button
-              onClick={() => addToCart(selectedBook)}
+              onClick={handleAddToCart}
               size="lg"
               className="flex-1 sm:flex-initial bg-purple-600 hover:bg-purple-700 text-sm sm:text-base"
             >
-              <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
+              <ShoppingCart className="w-4 h-4 ml-2" />
               أضف إلى السلة
             </Button>
 
-            {/* ✅ زر القلب الصغير */}
+            {/* ❤️ زر المفضلة */}
             <button
               onMouseEnter={() => setIsHover(true)}
               onMouseLeave={() => setIsHover(false)}
@@ -157,28 +183,28 @@ export const BookDetailsPage = ({
               `}
             >
               <Heart
-                className={`w-4 h-4 sm:w-4 sm:h-4
-                  ${isInWishlist ? "text-white fill-white" : "text-gray-600"}
-                `}
+                className={`w-4 h-4 ${
+                  isInWishlist ? "text-white fill-white" : "text-gray-600"
+                }`}
               />
             </button>
           </div>
 
           {/* ✅ الشحن */}
           <div className="bg-blue-50 p-3 sm:p-4 rounded-lg mt-4">
-            <div className="flex items-center space-x-2 space-x-reverse text-blue-700">
-              <Truck className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="font-bold text-sm sm:text-base">شحن مجاني</span>
+            <div className="flex items-center text-blue-700">
+              <Truck className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
+              <span className="font-bold text-sm sm:text-base">
+                شحن مجاني لجميع الطلبات
+              </span>
             </div>
           </div>
         </div>
 
-        {/* ✅ كتب ذات صلة */}
-        <div className="mt-8 sm:mt-12 lg:mt-16">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6 sm:mb-8">
-            كتب ذات صلة
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+        {/* ✅ الكتب ذات الصلة */}
+        <div className="mt-12">
+          <h2 className="text-2xl font-bold mb-6">كتب ذات صلة</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {relatedBooks.map((book) => (
               <BookCard
                 key={book.id}
@@ -192,6 +218,7 @@ export const BookDetailsPage = ({
                   discount: book.discount,
                   finalPrice: book.finalPrice,
                   category: book.category?.name || "",
+                  stock: book.stock,
                 }}
                 onClick={() => {
                   setSelectedBook(book);
