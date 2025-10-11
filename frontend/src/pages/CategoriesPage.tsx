@@ -15,6 +15,7 @@ import { Page, Book as BookType, Category } from "../types";
 import { getAllCategories, getBooksByCategory } from "../api/category"; // استدعاء الدوال
 
 import { getAllBooks } from "../api/book";
+import { handleApiError } from "../utils/handleApiError";
 
 interface CategoriesPageProps {
   currentPage: Page;
@@ -70,6 +71,9 @@ export const CategoriesPage = ({
         if (res.success && res.data) setBooks(res.data);
         else setBooks([]);
       } catch (err) {
+        const message = handleApiError(err);
+        console.error("❌ Error fetching books:", err);
+        alert(message);
         setError("فشل تحميل الكتب");
       }
       setLoading(false);

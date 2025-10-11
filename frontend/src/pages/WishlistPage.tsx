@@ -6,6 +6,7 @@ import { Footer } from "../components/Footer";
 import { BookCard } from "../components/BookCard";
 import { Button } from "../components/ui/Button";
 import { Page, Book as BookType, Category } from "../types";
+import { handleApiError } from "../utils/handleApiError";
 
 interface WishlistPageProps {
   currentPage: Page;
@@ -36,7 +37,8 @@ export const WishlistPage = ({
         const data = await getWishlist();
         setWishlist(data.map((item) => item.book));
       } catch (err) {
-        console.error("❌ Failed to fetch wishlist:", err);
+        const message = handleApiError(err);
+        console.error("❌ Failed to fetch wishlist:", message);
       } finally {
         setLoading(false);
       }
@@ -49,8 +51,10 @@ export const WishlistPage = ({
     try {
       await removeFromWishlist(String(bookId));
       setWishlist((prev) => prev.filter((b) => b.id !== bookId));
-    } catch (err) {
-      console.error("❌ Failed to remove from wishlist:", err);
+    } catch (error) {
+      const message = handleApiError(error);
+      console.error("❌ Failed to remove from wishlist:", error);
+      alert(message);
     }
   };
 
@@ -72,9 +76,9 @@ export const WishlistPage = ({
       addToCart(book);
       alert("تمت إضافة المنتج إلى السلة بنجاح 🛒");
     } catch (error: any) {
-      console.error("❌ Error adding to cart:", error);
-      console.log("📦 Response:", error?.response?.data);
-      alert("حدث خطأ أثناء إضافة المنتج إلى السلة");
+      const message = handleApiError(error);
+      console.error("❌ Error adding to cart:", message);
+      alert(message);
     } finally {
       setAddingBookId(null);
     }
@@ -129,7 +133,21 @@ export const WishlistPage = ({
                     stock: book.stock,
                   }}
                   onClick={() => {
-                    setSelectedBook(book);
+                    setSelectedBook({
+                      id: book.id,
+                      title: book.title,
+                      author: book.author,
+                      price: Number(book.price),
+                      coverImage: `http://localhost:5000/uploads/books/${book.coverImage}`,
+                      description: book.description,
+                      discount: book.discount,
+                      finalPrice:
+                        Number(book.price) -
+                        (Number(book.price) * (book.discount || 0)) / 100,
+                      category: book.category?.name || "غير مصنف",
+                      stock: book.stock,
+                      categoryId: book.categoryId,
+                    });
                     navigateTo("book-details");
                   }}
                   onAddToCart={(book, quantity) =>

@@ -11,6 +11,7 @@ import { Label } from "../components/ui/Label";
 import { Book, Settings } from "lucide-react";
 import { Page } from "../types";
 import { loginUser } from "../api/auth";
+import { handleApiError } from "../utils/handleApiError";
 
 interface LoginPageProps {
   navigateTo: (page: Page) => void;
@@ -48,9 +49,13 @@ export const LoginPage = ({ navigateTo, setIsLoggedIn }: LoginPageProps) => {
         setIsLoggedIn(true);
         navigateTo("home");
       } else {
-        setError(response.message || "حدث خطأ أثناء تسجيل الدخول");
+        const message = handleApiError(response);
+        setError(message);
       }
     } catch (err) {
+      const message = handleApiError(err);
+      console.error("❌ Error logging in:", err);
+      alert(message);
       setError("فشل الاتصال بالخادم");
     } finally {
       setLoading(false);

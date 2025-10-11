@@ -1,21 +1,30 @@
-import React, { useState } from 'react';
-import { Button } from '../components/ui/Button';
-import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card';
-import { Input } from '../components/ui/Input';
-import { Label } from '../components/ui/Label';
-import { Book } from 'lucide-react';
-import { Page } from '../types';
-import { registerUser } from '../api/auth'; // 👈 سننشئه بعد قليل
+import React, { useState } from "react";
+import { Button } from "../components/ui/Button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "../components/ui/Card";
+import { Input } from "../components/ui/Input";
+import { Label } from "../components/ui/Label";
+import { Book } from "lucide-react";
+import { Page } from "../types";
+import { registerUser } from "../api/auth"; // 👈 سننشئه بعد قليل
+import { handleApiError } from "../utils/handleApiError";
 
 interface RegisterPageProps {
   navigateTo: (page: Page) => void;
   setIsLoggedIn: (isLoggedIn: boolean) => void;
 }
 
-export const RegisterPage = ({ navigateTo, setIsLoggedIn }: RegisterPageProps) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+export const RegisterPage = ({
+  navigateTo,
+  setIsLoggedIn,
+}: RegisterPageProps) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -23,44 +32,52 @@ export const RegisterPage = ({ navigateTo, setIsLoggedIn }: RegisterPageProps) =
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleRegister = async () => {
-  setError(null);
+    setError(null);
 
-  if (!validateEmail(email)) {
-    setError("الرجاء إدخال بريد إلكتروني صالح");
-    return;
-  }
-  if (password.length < 6) {
-    setError("يجب أن تكون كلمة المرور 6 أحرف على الأقل");
-    return;
-  }
-  if (password !== confirmPassword) {
-    setError("كلمتا المرور غير متطابقتين");
-    return;
-  }
-
-  try {
-    setLoading(true);
-    const response = await registerUser(email, password);
-
-    if (response.success) {
-      setEmail('');
-      setPassword('');
-      setConfirmPassword('');
-      setIsLoggedIn(true);
-      navigateTo('home');
-    } else {
-      setError(response.message || "حدث خطأ أثناء إنشاء الحساب");
+    if (!validateEmail(email)) {
+      setError("الرجاء إدخال بريد إلكتروني صالح");
+      return;
     }
-  } catch {
-    setError("فشل الاتصال بالخادم");
-  } finally {
-    setLoading(false);
-  }
-};
+    if (password.length < 6) {
+      setError("يجب أن تكون كلمة المرور 6 أحرف على الأقل");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError("كلمتا المرور غير متطابقتين");
+      return;
+    }
 
+    try {
+      setLoading(true);
+      const response = await registerUser(email, password);
+
+      if (response.success) {
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+        setIsLoggedIn(true);
+        navigateTo("home");
+      } else {
+        const message = handleApiError(error);
+        console.error("❌ Error registering user:", error);
+        alert(message);
+        setError(response.message || "حدث خطأ أثناء إنشاء الحساب");
+      }
+    } catch (error) {
+      const message = handleApiError(error);
+      console.error("❌ Error registering user:", error);
+      alert(message);
+      setError("فشل الاتصال بالخادم");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center" dir="rtl">
+    <div
+      className="min-h-screen bg-gray-50 flex items-center justify-center"
+      dir="rtl"
+    >
       <div className="max-w-md w-full mx-4">
         <Card>
           <CardHeader className="text-center">
@@ -121,13 +138,13 @@ export const RegisterPage = ({ navigateTo, setIsLoggedIn }: RegisterPageProps) =
               disabled={loading}
               className="w-full bg-purple-600 hover:bg-purple-700"
             >
-              {loading ? 'جاري الإنشاء...' : 'إنشاء الحساب'}
+              {loading ? "جاري الإنشاء..." : "إنشاء الحساب"}
             </Button>
 
             <div className="text-center">
               <span className="text-gray-600">لديك حساب بالفعل؟ </span>
               <button
-                onClick={() => navigateTo('login')}
+                onClick={() => navigateTo("login")}
                 className="text-purple-600 hover:underline"
               >
                 تسجيل الدخول

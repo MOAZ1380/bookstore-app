@@ -9,6 +9,7 @@ import { Book as BookType, Category, Page } from "../types";
 import { getAllBooks } from "../api/book";
 import { getAllCategories } from "../api/category";
 import { addCartItem } from "../api/cart";
+import { handleApiError } from "../utils/handleApiError";
 
 interface HomePageProps {
   currentPage: Page;
@@ -39,10 +40,11 @@ export const HomePage = ({
         bookId: book.id,
         quantity,
       });
-      console.log("📦 Cart response:", response);
       alert("تمت إضافة الكتاب إلى السلة بنجاح ✅");
     } catch (error) {
-      alert("حدث خطأ أثناء الإضافة إلى السلة ❌");
+      const message = handleApiError(error);
+      console.error("❌ Error adding to cart:", error);
+      alert(message);
     }
   };
 

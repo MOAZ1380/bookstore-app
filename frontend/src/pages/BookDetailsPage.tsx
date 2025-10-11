@@ -10,6 +10,7 @@ import { Page, Book as BookType } from "../types";
 import { useWishlist } from "../hooks/useWishlist";
 import { getBooksByCategory } from "../api/category";
 import { addCartItem } from "../api/cart"; // ✅ استيراد API الكارت
+import { handleApiError } from "../utils/handleApiError";
 
 interface BookDetailsPageProps {
   currentPage: Page;
@@ -68,8 +69,9 @@ export const BookDetailsPage = ({
       addToCart(selectedBook); // لتحديث الواجهة محلياً
       alert("تمت إضافة المنتج إلى السلة بنجاح 🛒");
     } catch (error) {
+      const message = handleApiError(error);
       console.error("❌ Error adding to cart:", error);
-      alert("حدث خطأ أثناء إضافة المنتج إلى السلة");
+      alert(message);
     }
   };
 
