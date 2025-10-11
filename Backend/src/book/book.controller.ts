@@ -17,7 +17,7 @@ import { UpdateBookDto } from './dto/update-book.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { createMulterOptions } from 'src/utils/uploads/uploadSingleImage';
 import { UserRole } from '@prisma/client';
-import { Roles } from 'src/auth/decorator/roles.decorator';
+import { Roles } from 'src/utils/decorator/roles.decorator';
 import { JwtRolesGuard } from 'src/auth/guard/auth.guard';
 
 @Controller('book')
@@ -69,16 +69,10 @@ export class BookController {
     return this.bookService.findBooksByCategory(categoryId);
   }
 
-
-  
-
-
   @Patch('discount/')
   @UseGuards(JwtRolesGuard)
   @Roles(UserRole.ADMIN)
-  updateAllBooksDiscount(
-    @Body('discount') discount: number,
-  ) {
+  updateAllBooksDiscount(@Body('discount') discount: number) {
     return this.bookService.updateAllBooksDiscount(discount);
   }
 
@@ -92,8 +86,6 @@ export class BookController {
     return this.bookService.updateBookDiscount(id, discount);
   }
 
-  
-
   @Patch('clear-discount/')
   @UseGuards(JwtRolesGuard)
   @Roles(UserRole.ADMIN)
@@ -104,9 +96,7 @@ export class BookController {
   @Patch('clear-discount/:id')
   @UseGuards(JwtRolesGuard)
   @Roles(UserRole.ADMIN)
-  clearBookDiscount(
-    @Param('id', ParseIntPipe) id: number,
-  ) {
+  clearBookDiscount(@Param('id', ParseIntPipe) id: number) {
     return this.bookService.clearBookDiscount(id);
   }
 }

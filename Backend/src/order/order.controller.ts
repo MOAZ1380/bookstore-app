@@ -1,7 +1,17 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { OrderService } from './order.service';
 import { OrderStatus, UserRole } from '@prisma/client';
-import { Roles } from 'src/auth/decorator/roles.decorator';
+import { Roles } from 'src/utils/decorator/roles.decorator';
 import { JwtRolesGuard } from 'src/auth/guard/auth.guard';
 
 @Controller('orders')
@@ -22,7 +32,6 @@ export class OrderController {
   findAll() {
     return this.orderService.findAll();
   }
-
 
   @Get('me')
   @UseGuards(JwtRolesGuard)
@@ -48,14 +57,12 @@ export class OrderController {
     return this.orderService.updateStatus(userId, id, OrderStatus.CANCELLED);
   }
 
-
   @Get('user/:userId')
   @UseGuards(JwtRolesGuard)
   @Roles(UserRole.ADMIN)
   findAllOrdersByUser(@Param('userId', ParseIntPipe) userId: number) {
     return this.orderService.findAllOrdersByUser(userId);
   }
-
 
   @Patch(':id/status')
   @UseGuards(JwtRolesGuard)

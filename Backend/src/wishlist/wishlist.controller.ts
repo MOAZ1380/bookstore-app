@@ -12,7 +12,7 @@ import {
 import { WishlistService } from './wishlist.service';
 import { JwtRolesGuard } from 'src/auth/guard/auth.guard';
 import { UserRole } from '@prisma/client';
-import { Roles } from 'src/auth/decorator/roles.decorator';
+import { Roles } from 'src/utils/decorator/roles.decorator';
 
 @Controller('wishlist')
 export class WishlistController {
