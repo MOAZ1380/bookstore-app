@@ -37,8 +37,11 @@ export class CategoryService {
    * Get all categories
    * @returns an array of categories
    */
-  async findAll() {
-    return await this.prismaService.category.findMany();
+  async findAll(limit: number, offset: number) {
+    return await this.prismaService.category.findMany({
+      skip: offset,
+      take: limit,
+    });
   }
 
   /**
@@ -105,7 +108,6 @@ export class CategoryService {
         'Cannot delete category with associated books',
       );
     }
-    
 
     await this.prismaService.category.delete({
       where: { id },

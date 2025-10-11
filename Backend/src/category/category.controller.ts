@@ -13,8 +13,9 @@ import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { UserRole } from '@prisma/client';
-import { Roles } from 'src/auth/decorator/roles.decorator';
+import { Roles } from 'src/utils/decorator/roles.decorator';
 import { JwtRolesGuard } from 'src/auth/guard/auth.guard';
+import { Pagination } from 'src/utils/decorator/pagination.decorator';
 
 @Controller('category')
 export class CategoryController {
@@ -28,8 +29,9 @@ export class CategoryController {
   }
 
   @Get()
-  findAll() {
-    return this.categoryService.findAll();
+  findAll(@Pagination() pagination) {
+    const { limit, offset } = pagination;
+    return this.categoryService.findAll(limit, offset);
   }
 
   @Get(':id')

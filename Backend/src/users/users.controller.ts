@@ -14,11 +14,12 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
-import {UpdateUserByAdminDto} from './dto/update-user-by-admin.dto';
+import { UpdateUserByAdminDto } from './dto/update-user-by-admin.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtRolesGuard } from 'src/auth/guard/auth.guard';
-import { Roles } from 'src/auth/decorator/roles.decorator';
+import { Roles } from 'src/utils/decorator/roles.decorator';
 import { UserRole } from '@prisma/client';
+import { Pagination } from 'src/utils/decorator/pagination.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -34,8 +35,9 @@ export class UsersController {
   @Get('')
   @UseGuards(JwtRolesGuard)
   @Roles(UserRole.ADMIN)
-  findAll() {
-    return this.usersService.findAll();
+  findAll(@Pagination() pagination) {
+    const { limit, offset } = pagination;
+    return this.usersService.findAll(limit, offset);
   }
 
   @Get('me')
