@@ -67,7 +67,7 @@ export const AdminBooksPage: React.FC<AdminBooksPageProps> = ({
   const loadBooks = async () => {
     setLoading(true);
     const res = await getAllBooks();
-    if (res.success) setBooks(res.data);
+    if (res.success) setBooks(res.data.books);
     setLoading(false);
   };
 

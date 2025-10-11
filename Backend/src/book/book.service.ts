@@ -64,11 +64,18 @@ export class BookService {
       take: limit,
     });
 
-    return books.map((book) => ({
-      ...book,
-      price: Number(book.price),
-      finalPrice: this.calculateFinalPrice(book.price, book.discount),
-    }));
+    const count = await this.prisma.book.count();
+
+    if (!books.length) throw new NotFoundException('No books found');
+
+    return {
+      total: count,
+      books: books.map((book) => ({
+        ...book,
+        price: Number(book.price),
+        finalPrice: this.calculateFinalPrice(book.price, book.discount),
+      })),
+    };
   }
 
   /**
@@ -170,20 +177,27 @@ export class BookService {
    * Get all books under a specific category
    * @param categoryId Category ID
    */
-  async findBooksByCategory(categoryId: number) {
+  async findBooksByCategory(categoryId: number, pagination: { limit: number; offset: number }) {
     // pagination
 
     const books = await this.prisma.book.findMany({
       where: { categoryId },
+      skip: pagination.offset,
+      take: pagination.limit,
     });
 
-    if (!books.length)
-      throw new NotFoundException('No books found in this category');
-    return books.map((book) => ({
-      ...book,
-      price: Number(book.price),
-      finalPrice: this.calculateFinalPrice(book.price, book.discount),
-    }));
+    const count = await this.prisma.book.count({ where: { categoryId } });
+
+    if (!books.length) throw new NotFoundException('No books found');
+
+    return {
+      total: count,
+      books: books.map((book) => ({
+        ...book,
+        price: Number(book.price),
+        finalPrice: this.calculateFinalPrice(book.price, book.discount),
+      })),
+    };
   }
 
   /**

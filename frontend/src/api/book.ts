@@ -33,9 +33,9 @@ export interface UpdateBookDto {
 }
 
 /** ====== Books CRUD ====== */
-export const getAllBooks = async () => {
+export const getAllBooks = async (page: number = 1, limit: number = 10) => {
   try {
-    const res = await axiosClient.get('book');
+    const res = await axiosClient.get('book', { params: { limit, page } });
     return { success: true, data: res.data };
   } catch (err: any) {
     console.error('Failed to fetch books:', err.response?.data || err.message);
@@ -53,9 +53,9 @@ export const getBookById = async (id: number) => {
   }
 };
 
-export const getBooksByCategory = async (categoryId: number) => {
+export const getBooksByCategory = async (categoryId: number, page: number = 1, limit: number = 10) => {
   try {
-    const res = await axiosClient.get(`book/category/${categoryId}`);
+    const res = await axiosClient.get(`book/category/${categoryId}`, { params: { page, limit } });
     return { success: true, data: res.data };
   } catch (err: any) {
     console.error('Failed to fetch books by category:', err.response?.data || err.message);

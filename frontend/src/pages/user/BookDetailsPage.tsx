@@ -42,10 +42,16 @@ export const BookDetailsPage = ({
   useEffect(() => {
     const fetchRelatedBooks = async () => {
       if (!selectedBook.categoryId) return;
-      const res = await getBooksByCategory(selectedBook.categoryId);
+      const res = await getBooksByCategory(
+        Number(selectedBook.categoryId),
+        1,
+        5
+      );
       if (res.success && res.data) {
         setRelatedBooks(
-          res.data.filter((book) => book.id !== selectedBook.id).slice(0, 4)
+          res.data.books
+            .filter((book) => book.id !== selectedBook.id)
+            .slice(0, 4)
         );
       }
     };

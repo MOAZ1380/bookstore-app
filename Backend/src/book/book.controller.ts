@@ -67,8 +67,8 @@ export class BookController {
   }
 
   @Get('category/:categoryId')
-  getBooksByCategory(@Param('categoryId', ParseIntPipe) categoryId: number) {
-    return this.bookService.findBooksByCategory(categoryId);
+  getBooksByCategory(@Param('categoryId', ParseIntPipe) categoryId: number, @Pagination() pagination) {
+    return this.bookService.findBooksByCategory(categoryId, pagination);
   }
 
   @Patch('discount/')

@@ -26,6 +26,10 @@ export const HomePage = ({
   isLoggedIn,
   setSelectedBook,
 }: HomePageProps) => {
+  const [page, setPage] = useState(1);
+  const [limit] = useState(5);
+  const [totalPages, setTotalPages] = useState(1);
+
   const [books, setBooks] = useState<BookType[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loadingBooks, setLoadingBooks] = useState(true);
@@ -52,10 +56,11 @@ export const HomePage = ({
   useEffect(() => {
     const fetchBooks = async () => {
       setLoadingBooks(true);
-      const result = await getAllBooks();
+      const result = await getAllBooks(page, limit);
 
       if (result.success && result.data) {
-        setBooks(result.data);
+        setBooks(result.data.books);
+        setTotalPages(Math.ceil(result.data.total / limit));
       } else {
         setErrorBooks(result.message || "فشل تحميل الكتب");
       }
@@ -64,7 +69,7 @@ export const HomePage = ({
     };
 
     fetchBooks();
-  }, []);
+  }, [page, limit]);
 
   // 🏷️ جلب التصنيفات
   useEffect(() => {
@@ -208,14 +213,23 @@ export const HomePage = ({
             </div>
           )}
 
-          <div className="text-center mt-12">
+          <div className="flex justify-center items-center mt-8 gap-4">
             <Button
-              onClick={() => navigateTo("categories")}
               variant="outline"
-              size="lg"
-              className="border-purple-600 text-purple-600 hover:bg-purple-50 w-full sm:w-auto"
+              disabled={page === 1}
+              onClick={() => setPage(page - 1)}
             >
-              عرض جميع الكتب
+              السابق
+            </Button>
+            <span className="text-gray-700 text-sm">
+              الصفحة {page} من {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              disabled={page === totalPages}
+              onClick={() => setPage(page + 1)}
+            >
+              التالي
             </Button>
           </div>
         </div>

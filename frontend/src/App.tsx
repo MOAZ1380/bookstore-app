@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { HomePage } from "./pages/admin/HomePage";
+import { HomePage } from "./pages/user/HomePage";
 import { CategoriesPage } from "./pages/user/CategoriesPage";
 import { BookDetailsPage } from "./pages/user/BookDetailsPage";
 import { CartPage } from "./pages/user/CartPage";

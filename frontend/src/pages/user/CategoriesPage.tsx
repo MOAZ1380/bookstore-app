@@ -16,6 +16,7 @@ import { getAllCategories, getBooksByCategory } from "../../api/category"; // ا
 
 import { getAllBooks } from "../../api/book";
 import { handleApiError } from "../../utils/handleApiError";
+import { addCartItem } from "../../api/cart";
 
 interface CategoriesPageProps {
   currentPage: Page;
@@ -34,6 +35,10 @@ export const CategoriesPage = ({
   setSelectedBook,
   addToCart,
 }: CategoriesPageProps) => {
+  const [page, setPage] = useState(1);
+  const [limit] = useState(5);
+  const [totalPages, setTotalPages] = useState(1);
+
   const [books, setBooks] = useState<BookType[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | "all">(
@@ -41,6 +46,20 @@ export const CategoriesPage = ({
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const handleAddToCart = async (book: BookType, quantity: number) => {
+    try {
+      const response = await addCartItem({
+        bookId: book.id,
+        quantity,
+      });
+      alert("تمت إضافة الكتاب إلى السلة بنجاح ✅");
+    } catch (error) {
+      const message = handleApiError(error);
+      console.error("❌ Error adding to cart:", error);
+      alert(message);
+    }
+  };
 
   // 🧭 Fetch all categories
   useEffect(() => {
@@ -50,6 +69,7 @@ export const CategoriesPage = ({
         const res = await getAllCategories();
         if (res.success && res.data) setCategories(res.data);
       } catch (err) {
+        setCategories([]);
         setError("فشل تحميل التصنيفات");
       }
       setLoading(false);
@@ -64,12 +84,21 @@ export const CategoriesPage = ({
       try {
         let res;
         if (selectedCategoryId === "all") {
-          res = await getAllBooks();
+          res = await getAllBooks(page, limit);
         } else {
-          res = await getBooksByCategory(selectedCategoryId);
+          res = await getBooksByCategory(
+            Number(selectedCategoryId),
+            page,
+            limit
+          );
         }
-        if (res.success && res.data) setBooks(res.data);
-        else setBooks([]);
+
+        if (res.success && res.data) {
+          setBooks(res.data.books);
+          setTotalPages(Math.ceil(res.data.total / limit));
+        } else {
+          setBooks([]);
+        }
       } catch (err) {
         const message = handleApiError(err);
         console.error("❌ Error fetching books:", err);
@@ -79,7 +108,7 @@ export const CategoriesPage = ({
       setLoading(false);
     };
     fetchBooks();
-  }, [selectedCategoryId]);
+  }, [selectedCategoryId, page, limit]);
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
@@ -150,11 +179,33 @@ export const CategoriesPage = ({
                   setSelectedBook(book);
                   navigateTo("book-details");
                 }}
-                onAddToCart={addToCart}
+                onAddToCart={(book, quantity) =>
+                  handleAddToCart(book, quantity)
+                }
               />
             ))}
           </div>
         )}
+
+        <div className="flex justify-center items-center mt-8 gap-4">
+          <Button
+            variant="outline"
+            disabled={page === 1}
+            onClick={() => setPage(page - 1)}
+          >
+            السابق
+          </Button>
+          <span className="text-gray-700 text-sm">
+            الصفحة {page} من {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            disabled={page === totalPages}
+            onClick={() => setPage(page + 1)}
+          >
+            التالي
+          </Button>
+        </div>
       </div>
 
       <Footer navigateTo={navigateTo} />

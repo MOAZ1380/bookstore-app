@@ -10,9 +10,9 @@ export const getAllCategories = async () => {
     }
 }
 
-export const getBooksByCategory = async (categoryId: number) => { 
+export const getBooksByCategory = async (categoryId: number, page: number = 1, limit: number = 10) => {
     try {
-        const response = await axiosClient.get(`book/category/${categoryId}`);
+        const response = await axiosClient.get(`book/category/${categoryId}`, { params: { page, limit } });
         return { success: true, data: response.data };
     } catch (error: any) {
         console.error('Failed to fetch books by category:', error.response?.data || error.message);
