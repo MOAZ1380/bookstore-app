@@ -36,8 +36,6 @@ export class BookService {
       throw new NotFoundException('Category not found');
     }
 
-    
-
     const newBook = await this.prisma.book.create({
       data: {
         ...bookData,
@@ -46,23 +44,31 @@ export class BookService {
       },
     });
 
-    return { message: 'Book created successfully', book: { ...newBook, finalPrice: this.calculateFinalPrice(newBook.price, newBook.discount)} };
+    return {
+      message: 'Book created successfully',
+      book: {
+        ...newBook,
+        finalPrice: this.calculateFinalPrice(newBook.price, newBook.discount),
+      },
+    };
   }
 
   /**
    * Get all books
    */
-  async findAll() {
+  async findAll(limit, offset) {
     // pagination
     const books = await this.prisma.book.findMany({
       include: { category: true },
+      skip: offset,
+      take: limit,
     });
 
-  return books.map((book) => ({
-    ...book,
-    price: Number(book.price),
-    finalPrice: this.calculateFinalPrice(book.price, book.discount),
-  }));
+    return books.map((book) => ({
+      ...book,
+      price: Number(book.price),
+      finalPrice: this.calculateFinalPrice(book.price, book.discount),
+    }));
   }
 
   /**
@@ -71,16 +77,16 @@ export class BookService {
    */
   async findOne(id: number) {
     const book = await this.prisma.book.findUnique({
-    where: { id },
-    include: { category: true },
-  });
-  if (!book) throw new NotFoundException('Book not found');
+      where: { id },
+      include: { category: true },
+    });
+    if (!book) throw new NotFoundException('Book not found');
 
-  return {
-    ...book,
-    price: Number(book.price),
-    finalPrice: this.calculateFinalPrice(book.price, book.discount),
-  };
+    return {
+      ...book,
+      price: Number(book.price),
+      finalPrice: this.calculateFinalPrice(book.price, book.discount),
+    };
   }
 
   /**
@@ -123,7 +129,17 @@ export class BookService {
       data: dataToUpdate,
     });
 
-    return { message: 'Book updated successfully', book:{ ...updatedBook, price: Number(updatedBook.price), finalPrice: this.calculateFinalPrice(updatedBook.price, updatedBook.discount) } };
+    return {
+      message: 'Book updated successfully',
+      book: {
+        ...updatedBook,
+        price: Number(updatedBook.price),
+        finalPrice: this.calculateFinalPrice(
+          updatedBook.price,
+          updatedBook.discount,
+        ),
+      },
+    };
   }
 
   /**
@@ -168,7 +184,6 @@ export class BookService {
       price: Number(book.price),
       finalPrice: this.calculateFinalPrice(book.price, book.discount),
     }));
-
   }
 
   /**
@@ -194,7 +209,6 @@ export class BookService {
     };
   }
 
-
   /**
    * Update discount for all books
    * @param discount Discount percentage (0-100)
@@ -207,7 +221,6 @@ export class BookService {
     return { message: `Discount of ${discount}% applied to all books` };
   }
 
-
   /**
    * Clear discount for a specific book
    * @param id Book ID
@@ -219,7 +232,13 @@ export class BookService {
       where: { id },
       data: { discount: 0 },
     });
-    return { message: 'Book discount cleared successfully', book: { ...updatedBook, finalPrice: this.calculateFinalPrice(updatedBook.price, 0) } };
+    return {
+      message: 'Book discount cleared successfully',
+      book: {
+        ...updatedBook,
+        finalPrice: this.calculateFinalPrice(updatedBook.price, 0),
+      },
+    };
   }
 
   /**

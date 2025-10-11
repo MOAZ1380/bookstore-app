@@ -14,7 +14,7 @@ import { CartService } from './cart.service';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
 import { UserRole } from '@prisma/client';
-import { Roles } from 'src/auth/decorator/roles.decorator';
+import { Roles } from 'src/utils/decorator/roles.decorator';
 import { JwtRolesGuard } from 'src/auth/guard/auth.guard';
 
 @Controller('cart')
