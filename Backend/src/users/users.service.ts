@@ -60,9 +60,11 @@ export class UsersService {
    * - Removes password field from results
    * @returns array of users
    */
-  async findAll() {
+  async findAll(limit, offset) {
     const users = await this.prisma.user.findMany({
       include: { address: true },
+      skip: offset,
+      take: limit,
     });
     if (!users.length) throw new NotFoundException('No users found');
     return users.map((u) => this.removePassword(u));

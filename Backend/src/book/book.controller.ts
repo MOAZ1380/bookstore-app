@@ -19,6 +19,7 @@ import { createMulterOptions } from 'src/utils/uploads/uploadSingleImage';
 import { UserRole } from '@prisma/client';
 import { Roles } from 'src/utils/decorator/roles.decorator';
 import { JwtRolesGuard } from 'src/auth/guard/auth.guard';
+import { Pagination } from 'src/utils/decorator/pagination.decorator';
 
 @Controller('book')
 export class BookController {
@@ -36,8 +37,9 @@ export class BookController {
   }
 
   @Get()
-  findAll() {
-    return this.bookService.findAll();
+  findAll(@Pagination() pagination) {
+    const { limit, offset } = pagination;
+    return this.bookService.findAll(limit, offset);
   }
 
   @Get(':id')
