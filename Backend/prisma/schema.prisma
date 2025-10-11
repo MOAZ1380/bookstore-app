@@ -59,9 +59,9 @@ model Book {
 model Wishlist {
   id      Int      @id @default(autoincrement())
   userId  Int
-  user    User     @relation(fields: [userId], references: [id])
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   bookId  Int
-  book    Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  book    Book     @relation(fields: [bookId], references: [id])
   createdAt DateTime @default(now())
 
   @@unique([userId, bookId])
