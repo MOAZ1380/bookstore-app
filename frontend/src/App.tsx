@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { HomePage } from "./pages/HomePage";
-import { CategoriesPage } from "./pages/CategoriesPage";
-import { BookDetailsPage } from "./pages/BookDetailsPage";
-import { CartPage } from "./pages/CartPage";
-import { LoginPage } from "./pages/LoginPage";
-import { RegisterPage } from "./pages/RegisterPage";
-import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
-import { OTPPage } from "./pages/OTPPage";
-import { ResetPasswordPage } from "./pages/ResetPasswordPage";
-import { MyOrdersPage } from "./pages/MyOrdersPage";
+import { HomePage } from "./pages/admin/HomePage";
+import { CategoriesPage } from "./pages/user/CategoriesPage";
+import { BookDetailsPage } from "./pages/user/BookDetailsPage";
+import { CartPage } from "./pages/user/CartPage";
+import { LoginPage } from "./pages/user/LoginPage";
+import { RegisterPage } from "./pages/user/RegisterPage";
+import { ForgotPasswordPage } from "./pages/user/ForgotPasswordPage";
+import { OTPPage } from "./pages/user/OTPPage";
+import { ResetPasswordPage } from "./pages/user/ResetPasswordPage";
+import { MyOrdersPage } from "./pages/user/MyOrdersPage";
 import { AdminLoginPage } from "./pages/admin/AdminLoginPage";
 import { AdminDashboardPage } from "./pages/admin/AdminDashboardPage";
 import { AdminCategoriesPage } from "./pages/admin/AdminCategoriesPage";
@@ -17,7 +17,7 @@ import { AdminOrdersPage } from "./pages/admin/AdminOrdersPage";
 import { AdminUsersPage } from "./pages/admin/AdminUsersPage";
 import { Book, Page } from "./types";
 import "./index.css";
-import { WishlistPage } from "./pages/WishlistPage";
+import { WishlistPage } from "./pages/user/WishlistPage";
 
 export const App = () => {
   const [currentPage, setCurrentPage] = useState<Page>("home");

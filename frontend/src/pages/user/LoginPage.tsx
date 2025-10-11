@@ -1,71 +1,60 @@
 import React, { useState } from "react";
-import { Button } from "../components/ui/Button";
+import { Button } from "../../components/ui/Button";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardContent,
-} from "../components/ui/Card";
-import { Input } from "../components/ui/Input";
-import { Label } from "../components/ui/Label";
-import { Book } from "lucide-react";
-import { Page } from "../types";
-import { registerUser } from "../api/auth"; // 👈 سننشئه بعد قليل
-import { handleApiError } from "../utils/handleApiError";
+} from "../../components/ui/Card";
+import { Input } from "../../components/ui/Input";
+import { Label } from "../../components/ui/Label";
+import { Book, Settings } from "lucide-react";
+import { Page } from "../../types";
+import { loginUser } from "../../api/auth";
+import { handleApiError } from "../../utils/handleApiError";
 
-interface RegisterPageProps {
+interface LoginPageProps {
   navigateTo: (page: Page) => void;
   setIsLoggedIn: (isLoggedIn: boolean) => void;
 }
 
-export const RegisterPage = ({
-  navigateTo,
-  setIsLoggedIn,
-}: RegisterPageProps) => {
+export const LoginPage = ({ navigateTo, setIsLoggedIn }: LoginPageProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const validateEmail = (email: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const handleRegister = async () => {
+  const handleLogin = async () => {
     setError(null);
 
     if (!validateEmail(email)) {
       setError("الرجاء إدخال بريد إلكتروني صالح");
       return;
     }
-    if (password.length < 6) {
-      setError("يجب أن تكون كلمة المرور 6 أحرف على الأقل");
-      return;
-    }
-    if (password !== confirmPassword) {
-      setError("كلمتا المرور غير متطابقتين");
+    if (!password || password.length < 6) {
+      setError("الرجاء إدخال كلمة مرور صحيحة (6 أحرف على الأقل)");
       return;
     }
 
     try {
       setLoading(true);
-      const response = await registerUser(email, password);
+      const response = await loginUser(email, password);
 
       if (response.success) {
-        setEmail("");
         setPassword("");
-        setConfirmPassword("");
+        setEmail("");
         setIsLoggedIn(true);
         navigateTo("home");
       } else {
-        const message = handleApiError(error);
-        console.error("❌ Error registering user:", error);
-        alert(message);
-        setError(response.message || "حدث خطأ أثناء إنشاء الحساب");
+        const message = handleApiError(response);
+        setError(message);
       }
-    } catch (error) {
-      const message = handleApiError(error);
-      console.error("❌ Error registering user:", error);
+    } catch (err) {
+      const message = handleApiError(err);
+      console.error("❌ Error logging in:", err);
       alert(message);
       setError("فشل الاتصال بالخادم");
     } finally {
@@ -75,18 +64,28 @@ export const RegisterPage = ({
 
   return (
     <div
-      className="min-h-screen bg-gray-50 flex items-center justify-center"
+      className="min-h-screen bg-gray-50 flex items-center justify-center relative"
       dir="rtl"
     >
+      {/* ✅ أيقونة الإعدادات في أسفل يسار الصفحة */}
+      <button
+        onClick={() => navigateTo("admin-login")}
+        className="absolute bottom-4 left-4 p-2 text-gray-500 hover:text-purple-600 transition"
+        title="إعدادات الإدارة"
+      >
+        <Settings className="w-6 h-6" />
+      </button>
+
       <div className="max-w-md w-full mx-4">
         <Card>
           <CardHeader className="text-center">
             <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
               <Book className="w-8 h-8 text-white" />
             </div>
-            <CardTitle className="text-2xl">إنشاء حساب جديد</CardTitle>
-            <p className="text-gray-600">انضم إلى عالم الكتب استور اليوم</p>
+            <CardTitle className="text-2xl">تسجيل الدخول</CardTitle>
+            <p className="text-gray-600">أدخل بياناتك للوصول إلى حسابك</p>
           </CardHeader>
+
           <CardContent className="space-y-4">
             {error && (
               <div className="bg-red-100 text-red-600 p-2 rounded text-center">
@@ -120,34 +119,30 @@ export const RegisterPage = ({
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">تأكيد كلمة المرور</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                placeholder="أعد إدخال كلمة المرور"
-                className="text-right"
-                dir="rtl"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
+            <div className="flex items-center justify-between">
+              <button
+                onClick={() => navigateTo("forgot-password")}
+                className="text-sm text-purple-600 hover:underline"
+              >
+                نسيت كلمة المرور؟
+              </button>
             </div>
 
             <Button
-              onClick={handleRegister}
+              onClick={handleLogin}
               disabled={loading}
               className="w-full bg-purple-600 hover:bg-purple-700"
             >
-              {loading ? "جاري الإنشاء..." : "إنشاء الحساب"}
+              {loading ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
             </Button>
 
             <div className="text-center">
-              <span className="text-gray-600">لديك حساب بالفعل؟ </span>
+              <span className="text-gray-600">ليس لديك حساب؟ </span>
               <button
-                onClick={() => navigateTo("login")}
+                onClick={() => navigateTo("register")}
                 className="text-purple-600 hover:underline"
               >
-                تسجيل الدخول
+                إنشاء حساب جديد
               </button>
             </div>
           </CardContent>

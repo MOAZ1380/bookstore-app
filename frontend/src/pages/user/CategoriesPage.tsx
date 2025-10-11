@@ -1,21 +1,21 @@
 import { useEffect, useState } from "react";
-import { Header } from "../components/Header";
-import { Footer } from "../components/Footer";
-import { BookCard } from "../components/BookCard";
-import { Button } from "../components/ui/Button";
+import { Header } from "../../components/Header";
+import { Footer } from "../../components/Footer";
+import { BookCard } from "../../components/BookCard";
+import { Button } from "../../components/ui/Button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../components/ui/Select";
+} from "../../components/ui/Select";
 import { Filter, ArrowRight, ArrowLeft } from "lucide-react";
-import { Page, Book as BookType, Category } from "../types";
-import { getAllCategories, getBooksByCategory } from "../api/category"; // استدعاء الدوال
+import { Page, Book as BookType, Category } from "../../types";
+import { getAllCategories, getBooksByCategory } from "../../api/category"; // استدعاء الدوال
 
-import { getAllBooks } from "../api/book";
-import { handleApiError } from "../utils/handleApiError";
+import { getAllBooks } from "../../api/book";
+import { handleApiError } from "../../utils/handleApiError";
 
 interface CategoriesPageProps {
   currentPage: Page;

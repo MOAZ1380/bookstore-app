@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
-import { Header } from "../components/Header";
-import { Footer } from "../components/Footer";
-import { BookCard } from "../components/BookCard";
-import { Button } from "../components/ui/Button";
-import { Badge } from "../components/ui/Badge";
-import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+import { Header } from "../../components/Header";
+import { Footer } from "../../components/Footer";
+import { BookCard } from "../../components/BookCard";
+import { Button } from "../../components/ui/Button";
+import { Badge } from "../../components/ui/Badge";
+import { ImageWithFallback } from "../../components/figma/ImageWithFallback";
 import { ShoppingCart, Heart, Truck, Plus, Minus } from "lucide-react";
-import { Page, Book as BookType } from "../types";
-import { useWishlist } from "../hooks/useWishlist";
-import { getBooksByCategory } from "../api/category";
-import { addCartItem } from "../api/cart"; // ✅ استيراد API الكارت
-import { handleApiError } from "../utils/handleApiError";
+import { Page, Book as BookType } from "../../types";
+import { useWishlist } from "../../hooks/useWishlist";
+import { getBooksByCategory } from "../../api/category";
+import { addCartItem } from "../../api/cart"; // ✅ استيراد API الكارت
+import { handleApiError } from "../../utils/handleApiError";
 
 interface BookDetailsPageProps {
   currentPage: Page;

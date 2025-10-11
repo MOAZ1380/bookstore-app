@@ -3,9 +3,11 @@ import axiosClient from "./axiosClient";
 
 export enum OrderStatus {
   PENDING = "PENDING",
+  PROCESSING = "PROCESSING",
   COMPLETED = "COMPLETED",
   CANCELLED = "CANCELLED",
 }
+
 
 export interface OrderItem {
   id: number;

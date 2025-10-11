@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { getWishlist, removeFromWishlist } from "../api/whishlist";
-import { addCartItem } from "../api/cart";
-import { Header } from "../components/Header";
-import { Footer } from "../components/Footer";
-import { BookCard } from "../components/BookCard";
-import { Button } from "../components/ui/Button";
-import { Page, Book as BookType, Category } from "../types";
-import { handleApiError } from "../utils/handleApiError";
+import { getWishlist, removeFromWishlist } from "../../api/whishlist";
+import { addCartItem } from "../../api/cart";
+import { Header } from "../../components/Header";
+import { Footer } from "../../components/Footer";
+import { BookCard } from "../../components/BookCard";
+import { Button } from "../../components/ui/Button";
+import { Page, Book as BookType, Category } from "../../types";
+import { handleApiError } from "../../utils/handleApiError";
 
 interface WishlistPageProps {
   currentPage: Page;

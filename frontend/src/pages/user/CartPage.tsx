@@ -1,25 +1,25 @@
 import { useEffect, useState } from "react";
-import { Header } from "../components/Header";
-import { Footer } from "../components/Footer";
-import { Button } from "../components/ui/Button";
+import { Header } from "../../components/Header";
+import { Footer } from "../../components/Footer";
+import { Button } from "../../components/ui/Button";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardContent,
-} from "../components/ui/Card";
-import { Separator } from "../components/ui/Separator";
-import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+} from "../../components/ui/Card";
+import { Separator } from "../../components/ui/Separator";
+import { ImageWithFallback } from "../../components/figma/ImageWithFallback";
 import { ShoppingCart, Trash2, Plus, Minus } from "lucide-react";
-import { Page } from "../types";
+import { Page } from "../../types";
 import {
   getCartItems,
   removeCartItem,
   updateCartItem,
   clearCart,
-} from "../api/cart";
-import { createOrder } from "../api/order";
-import { handleApiError } from "../utils/handleApiError";
+} from "../../api/cart";
+import { createOrder } from "../../api/order";
+import { handleApiError } from "../../utils/handleApiError";
 
 interface CartItem {
   id: number;

@@ -61,7 +61,7 @@ model Wishlist {
   userId  Int
   user    User     @relation(fields: [userId], references: [id])
   bookId  Int
-  book    Book     @relation(fields: [bookId], references: [id])
+  book    Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 
   @@unique([userId, bookId])
@@ -78,7 +78,7 @@ model Address {
   floor        String?
 
   userId       Int @unique
-  user         User     @relation(fields: [userId], references: [id])
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -89,7 +89,7 @@ model CartItem {
   userId   Int
   bookId   Int
   quantity Int      @default(1)
-  user     User     @relation(fields: [userId], references: [id])
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   book     Book     @relation(fields: [bookId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -98,7 +98,7 @@ model CartItem {
 model Order {
   id         Int          @id @default(autoincrement())
   userId     Int
-  user       User         @relation(fields: [userId], references: [id])
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   status     OrderStatus
   totalPrice Decimal
   orderItems OrderItem[]

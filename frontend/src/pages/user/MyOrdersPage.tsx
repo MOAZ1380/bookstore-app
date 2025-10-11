@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { Header } from "../components/Header";
-import { Footer } from "../components/Footer";
-import { Button } from "../components/ui/Button";
-import { Card, CardContent } from "../components/ui/Card";
-import { Badge } from "../components/ui/Badge";
+import { Header } from "../../components/Header";
+import { Footer } from "../../components/Footer";
+import { Button } from "../../components/ui/Button";
+import { Card, CardContent } from "../../components/ui/Card";
+import { Badge } from "../../components/ui/Badge";
 import { ShoppingBag, Eye } from "lucide-react";
-import { getMyOrders, cancelOrder, OrderStatus } from "../api/order";
-import { Page } from "../types";
-import { handleApiError } from "../utils/handleApiError";
+import { getMyOrders, cancelOrder, OrderStatus } from "../../api/order";
+import { Page } from "../../types";
+import { handleApiError } from "../../utils/handleApiError";
 
 interface MyOrdersPageProps {
   currentPage: Page;

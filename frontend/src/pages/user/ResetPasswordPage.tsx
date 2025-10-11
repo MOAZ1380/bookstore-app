@@ -1,19 +1,30 @@
-import { Header } from '../components/Header';
-import { Footer } from '../components/Footer';
-import { Button } from '../components/ui/Button';
-import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card';
-import { Input } from '../components/ui/Input';
-import { Label } from '../components/ui/Label';
-import { Book } from 'lucide-react';
-import { Page } from '../types';
+import { Header } from "../../components/Header";
+import { Footer } from "../../components/Footer";
+import { Button } from "../../components/ui/Button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "../../components/ui/Card";
+import { Input } from "../../components/ui/Input";
+import { Label } from "../../components/ui/Label";
+import { Book } from "lucide-react";
+import { Page } from "../types";
 
 interface ResetPasswordPageProps {
   navigateTo: (page: Page) => void;
   setIsLoggedIn: (isLoggedIn: boolean) => void;
 }
 
-export const ResetPasswordPage = ({ navigateTo, setIsLoggedIn }: ResetPasswordPageProps) => (
-  <div className="min-h-screen bg-gray-50 flex items-center justify-center" dir="rtl">
+export const ResetPasswordPage = ({
+  navigateTo,
+  setIsLoggedIn,
+}: ResetPasswordPageProps) => (
+  <div
+    className="min-h-screen bg-gray-50 flex items-center justify-center"
+    dir="rtl"
+  >
     <div className="max-w-md w-full mx-4">
       <Card>
         <CardHeader className="text-center">
@@ -35,7 +46,9 @@ export const ResetPasswordPage = ({ navigateTo, setIsLoggedIn }: ResetPasswordPa
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="confirmNewPassword">تأكيد كلمة المرور الجديدة</Label>
+            <Label htmlFor="confirmNewPassword">
+              تأكيد كلمة المرور الجديدة
+            </Label>
             <Input
               id="confirmNewPassword"
               type="password"
@@ -47,7 +60,7 @@ export const ResetPasswordPage = ({ navigateTo, setIsLoggedIn }: ResetPasswordPa
           <Button
             onClick={() => {
               setIsLoggedIn(true);
-              navigateTo('home');
+              navigateTo("home");
             }}
             className="w-full bg-purple-600 hover:bg-purple-700"
           >

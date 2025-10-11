@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
-import { Header } from "../components/Header";
-import { Footer } from "../components/Footer";
-import { BookCard } from "../components/BookCard";
-import { Button } from "../components/ui/Button";
-import { Card, CardContent } from "../components/ui/Card";
-import { ImageWithFallback } from "../components/figma/ImageWithFallback";
-import { Book as BookType, Category, Page } from "../types";
-import { getAllBooks } from "../api/book";
-import { getAllCategories } from "../api/category";
-import { addCartItem } from "../api/cart";
-import { handleApiError } from "../utils/handleApiError";
+import { Header } from "../../components/Header";
+import { Footer } from "../../components/Footer";
+import { BookCard } from "../../components/BookCard";
+import { Button } from "../../components/ui/Button";
+import { Card, CardContent } from "../../components/ui/Card";
+import { ImageWithFallback } from "../../components/figma/ImageWithFallback";
+import { Book as BookType, Category, Page } from "../../types";
+import { getAllBooks } from "../../api/book";
+import { getAllCategories } from "../../api/category";
+import { addCartItem } from "../../api/cart";
+import { handleApiError } from "../../utils/handleApiError";
 
 interface HomePageProps {
   currentPage: Page;

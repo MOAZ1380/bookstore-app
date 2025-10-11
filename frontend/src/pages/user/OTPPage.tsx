@@ -1,11 +1,16 @@
-import { Header } from '../components/Header';
-import { Footer } from '../components/Footer';
-import { Button } from '../components/ui/Button';
-import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card';
-import { Input } from '../components/ui/Input';
-import { Label } from '../components/ui/Label';
-import { Book } from 'lucide-react';
-import { Page } from '../types';
+import { Header } from "../../components/Header";
+import { Footer } from "../../components/Footer";
+import { Button } from "../../components/ui/Button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "../../components/ui/Card";
+import { Input } from "../../components/ui/Input";
+import { Label } from "../../components/ui/Label";
+import { Book } from "lucide-react";
+import { Page } from "../../types";
 
 interface OTPPageProps {
   navigateTo: (page: Page) => void;
@@ -14,7 +19,10 @@ interface OTPPageProps {
 }
 
 export const OTPPage = ({ navigateTo, otpCode, setOtpCode }: OTPPageProps) => (
-  <div className="min-h-screen bg-gray-50 flex items-center justify-center" dir="rtl">
+  <div
+    className="min-h-screen bg-gray-50 flex items-center justify-center"
+    dir="rtl"
+  >
     <div className="max-w-md w-full mx-4">
       <Card>
         <CardHeader className="text-center">
@@ -22,7 +30,9 @@ export const OTPPage = ({ navigateTo, otpCode, setOtpCode }: OTPPageProps) => (
             <Book className="w-8 h-8 text-white" />
           </div>
           <CardTitle className="text-2xl">رمز التحقق</CardTitle>
-          <p className="text-gray-600">أدخل الرمز المرسل إلى بريدك الإلكتروني</p>
+          <p className="text-gray-600">
+            أدخل الرمز المرسل إلى بريدك الإلكتروني
+          </p>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -34,16 +44,16 @@ export const OTPPage = ({ navigateTo, otpCode, setOtpCode }: OTPPageProps) => (
                   className="w-12 h-12 text-center text-lg"
                   maxLength={1}
                   onChange={(e) => {
-                    const newOtp = otpCode.split('');
+                    const newOtp = otpCode.split("");
                     newOtp[i] = e.target.value;
-                    setOtpCode(newOtp.join(''));
+                    setOtpCode(newOtp.join(""));
                   }}
                 />
               ))}
             </div>
           </div>
           <Button
-            onClick={() => navigateTo('reset-password')}
+            onClick={() => navigateTo("reset-password")}
             className="w-full bg-purple-600 hover:bg-purple-700"
           >
             تأكيد الرمز
